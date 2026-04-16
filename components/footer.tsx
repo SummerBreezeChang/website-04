@@ -8,7 +8,7 @@ export default function Footer() {
         <div className="flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="flex items-center gap-4">
             <img
-              src="/summer-logo.png"
+              src="https://images.squarespace-cdn.com/content/v1/654ed48ab10a1e0878b75a4f/92df0c43-0692-4655-a873-47801bbd2e5d/logo2.png?format=1500w"
               alt="Summer"
               className="h-6 w-auto"
             />

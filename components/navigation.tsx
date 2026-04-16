@@ -8,7 +8,7 @@ const navLinks = [
   { href: "/#projects",  label: "Portfolio",  external: false },
   { href: "/#services",  label: "Services",   external: false },
   { href: "/#about",     label: "About",      external: false },
-  { href: "https://postfit.beehiiv.com/", label: "Blog", external: true },
+  { href: "/blog", label: "Blog", external: false },
 ]
 
 export default function Navigation() {
@@ -37,7 +37,7 @@ export default function Navigation() {
         style={{ paddingTop: navPaddingY }}
       >
         <motion.nav
-          className="flex items-center justify-between px-6 md:px-8"
+          className="relative flex items-center justify-between px-6 md:px-8"
           style={{
             width:           navWidth,
             borderRadius:    navBorderRadius,
@@ -102,26 +102,27 @@ export default function Navigation() {
           </button>
 
           {/* Center — logo */}
-          <Link href="/" className="absolute left-1/2 -translate-x-1/2">
+          <Link href="/" className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
             <img
-              src="/summer-logo.png"
+              src="https://images.squarespace-cdn.com/content/v1/654ed48ab10a1e0878b75a4f/92df0c43-0692-4655-a873-47801bbd2e5d/logo2.png?format=1500w"
               alt="Summer Chang"
               className="h-7 w-auto transition-all duration-300"
-              style={{ filter: scrolled ? "none" : "brightness(0) invert(1)" }}
+              style={{
+                filter: scrolled ? "none" : "brightness(0) saturate(100%)",
+                opacity: scrolled ? 1 : 0.85,
+              }}
             />
           </Link>
 
           {/* Right — Blog + Resume */}
           <div className="flex items-center gap-5">
-            <a
-              href="https://postfit.beehiiv.com/"
-              target="_blank"
-              rel="noopener noreferrer"
+            <Link
+              href="/blog"
               className="hidden md:block font-medium transition-colors duration-300"
               style={{ fontSize: "14px", color: scrolled ? "#888" : "rgba(41,41,41,0.85)" }}
             >
-              Blog ↗
-            </a>
+              Blog
+            </Link>
             <a
               href="/Summer-Chang-Resume.pdf"
               target="_blank"

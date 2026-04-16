@@ -32,7 +32,7 @@ export default function Home() {
   const N = featured.length // should be 6
 
   // ─── HERO HEIGHT ────────────────────────────────────────────────────────
-  const HERO_H = 680
+  const HERO_H = 700
 
   // ─── BENTO LAYOUT (12-col grid) ─────────────────────────────────────────
   const bento = [
@@ -50,12 +50,12 @@ export default function Home() {
   // r     = initial rotation (degrees)
   // w/h   = initial size (px)
   const floatingCards = [
-    { gi: 0, ix:  6, iy: 16, r: -10, w: 110, h: 155 },
-    { gi: 1, ix: 10, iy: 48, r:  -6, w: 150, h: 100 },
-    { gi: 5, ix:  5, iy: 76, r:  -3, w: 100, h:  72 },
-    { gi: 2, ix: 92, iy: 14, r:   7, w: 115, h: 195 },
-    { gi: 3, ix: 88, iy: 52, r:   4, w: 100, h: 100 },
-    { gi: 4, ix: 86, iy: 80, r:   3, w: 125, h:  78 },
+    { gi: 0, ix:  6, iy: 26, r: -10, w: 110, h: 155 },
+    { gi: 1, ix: 10, iy: 58, r:  -6, w: 150, h: 100 },
+    { gi: 5, ix:  5, iy: 84, r:  -3, w: 100, h:  72 },
+    { gi: 2, ix: 92, iy: 24, r:   7, w: 115, h: 195 },
+    { gi: 3, ix: 88, iy: 60, r:   4, w: 100, h: 100 },
+    { gi: 4, ix: 86, iy: 86, r:   3, w: 125, h:  78 },
   ]
 
   // ─── MEASURE BENTO CARD POSITIONS ───────────────────────────────────────
@@ -86,12 +86,13 @@ export default function Home() {
       const sy = window.scrollY
       setScrollY(sy)
 
-      // Contact scale-up (uses offsetTop for stable positioning)
+      // Contact scale-up: keep small at section entry, expand while scrolling through section
       if (contactRef.current) {
-        const top   = contactRef.current.offsetTop
-        const h     = window.innerHeight
-        const start = top - h
-        const end   = top - h * 0.3
+        const top = contactRef.current.offsetTop
+        const sectionH = contactRef.current.offsetHeight
+        const h = window.innerHeight
+        const start = top - h * 0.15
+        const end = top + sectionH * 0.75
         const range = end - start
         if (range > 0) {
           setContactScale(Math.max(0, Math.min(1, (sy - start) / range)))
@@ -125,10 +126,26 @@ export default function Home() {
     : 1 - Math.pow(-2 * sp + 2, 3) / 2
 
   // ─── CONTACT CARD GEOMETRY ───────────────────────────────────────────────
-  const cW       = 260 + (vw - 260) * contactScale
-  const cH       = 360 + (vh - 360) * contactScale
-  const cR       = 24  * (1 - contactScale)
-  const textRise = Math.max(0, Math.min(1, (contactScale - 0.15) / 0.5))
+  const lerp = (a: number, b: number, t: number) => a + (b - a) * t
+  const mediumPhase = 0.3
+  const stageA = Math.min(contactScale / mediumPhase, 1) // small → medium (faster)
+  const stageB = Math.max(0, Math.min(1, (contactScale - mediumPhase) / (1 - mediumPhase))) // medium → large
+
+  const smallW = 280
+  // Match Featured Showcase card footprint (sticky panel has p-4 / md:p-6).
+  const showcaseInset = vw >= 768 ? 48 : 32
+  const medW = Math.max(320, vw - showcaseInset)
+  const largeW = Math.max(860, vw * 0.94)
+
+  const smallH = 220
+  const medH = Math.max(280, vh - showcaseInset)
+  const largeH = Math.max(560, vh * 0.9)
+
+  const cW = stageB > 0 ? lerp(medW, largeW, stageB) : lerp(smallW, medW, stageA)
+  const cH = stageB > 0 ? lerp(medH, largeH, stageB) : lerp(smallH, medH, stageA)
+  const cR = stageB > 0 ? lerp(22, 10, stageB) : lerp(28, 22, stageA)
+  const textRise = Math.max(0, Math.min(1, (contactScale - 0.03) / 0.35))
+  const dropToBottom = stageB * Math.max(0, (vh - cH) / 2)
 
   return (
     <main className="min-h-screen bg-background">
@@ -170,7 +187,7 @@ export default function Home() {
       {/* ═══ SECTION 1: HERO ═══ */}
       <section
         className="relative flex items-center justify-center px-7"
-        style={{ minHeight: HERO_H }}
+        style={{ minHeight: Math.max(HERO_H, vh) }}
       >
         <div
           className="text-center max-w-xl mx-auto relative z-10"
@@ -180,9 +197,6 @@ export default function Home() {
           }}
         >
           <div className="flex justify-center gap-2 mb-5 flex-wrap">
-            <span className="text-xs font-medium px-4 py-1.5 rounded-full border border-border bg-white/80">
-              AI & Product Designer
-            </span>
             <span className="text-xs font-medium px-4 py-1.5 rounded-full border border-border bg-white/80 flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-green-500 shadow-[0_0_6px_#22C55E]" />
               Available for work
@@ -194,10 +208,6 @@ export default function Home() {
             products that help startups{" "}
             <span className="text-primary">think clearly and move fast.</span>
           </h1>
-          <p className="text-sm md:text-base text-muted-foreground leading-relaxed max-w-md mx-auto mb-7">
-            Senior product designer with 10+ years across physical goods, brand, and software.
-            Now focused on AI systems that help teams make better decisions.
-          </p>
           <div className="flex gap-3 justify-center flex-wrap">
             <Link href="#projects"
                   className="bg-primary text-white px-6 py-3 rounded-full text-sm font-semibold hover:bg-primary/90 transition-colors">
@@ -214,7 +224,7 @@ export default function Home() {
       {/* ═══ SECTION 2: BENTO GRID (floating cards land here) ═══ */}
       <section
         id="projects"
-        className="px-4 pb-6"
+        className="px-4 pb-40 md:pb-48 -mt-[240px] md:-mt-[248px]"
         style={{
           // Fade in as scroll progresses past 25%
           opacity:    sp > 0.25 ? Math.min(1, (sp - 0.25) * 3) : 0,
@@ -222,10 +232,10 @@ export default function Home() {
           transition: "opacity .4s, transform .4s",
         }}
       >
-        <div className="max-w-5xl mx-auto bg-card rounded-3xl border p-5">
+        <div className="max-w-6xl mx-auto bg-card rounded-3xl border p-6">
           {/* Header */}
-          <div className="flex items-center gap-3 mb-5">
-            <div className="w-11 h-11 rounded-full overflow-hidden border-2 border-white shadow-[0_0_0_2px_theme(colors.pink.100)] shrink-0">
+          <div className="flex items-center gap-4 mb-6">
+            <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-white shadow-[0_0_0_2px_theme(colors.pink.100)] shrink-0">
               <img src="/headshot.png" alt="Summer Chang" className="w-full h-full object-cover" />
             </div>
             <div>
@@ -236,8 +246,8 @@ export default function Home() {
 
           {/* 12-column bento grid */}
           <div
-            className="grid gap-2"
-            style={{ gridTemplateColumns: "repeat(12, 1fr)", gridAutoRows: 100 }}
+            className="grid gap-2.5"
+            style={{ gridTemplateColumns: "repeat(12, 1fr)", gridAutoRows: 120 }}
           >
             {featured.map((p, i) => (
               <Link
@@ -292,15 +302,12 @@ export default function Home() {
       </section>
 
       {/* ═══ SECTION 4: SERVICES ═══ */}
-      <section id="services" className="py-14 px-7 bg-card">
+      <section id="services" className="py-24 md:py-28 px-7 bg-card">
         <div className="max-w-5xl mx-auto">
-          <h2 className="text-2xl md:text-3xl font-extrabold text-center mb-1">
+          <h2 className="text-2xl md:text-3xl font-extrabold text-center mb-16 md:mb-20">
             <span className="bg-primary text-white px-2.5 py-0.5 rounded-md mr-1.5">3 ways</span>
             I can help
           </h2>
-          <p className="text-center text-muted-foreground text-sm mt-2 mb-8 max-w-md mx-auto">
-            From AI-powered automation to brand strategy — I help startups design systems that scale.
-          </p>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {[
               {
@@ -322,18 +329,24 @@ export default function Home() {
                 cta: "Get in touch",
               },
             ].map((s) => (
-              <div key={s.t} className="rounded-2xl border-2 border-border p-5 flex flex-col">
+              <div
+                key={s.t}
+                className="group rounded-2xl border-2 border-border bg-white/70 p-5 flex flex-col transition-all duration-150 ease-out hover:-translate-y-1 hover:border-primary/40 hover:shadow-[0_18px_40px_-20px_rgba(199,37,133,0.45)] active:translate-y-0 active:scale-[0.995] active:border-primary/60"
+              >
                 <h4 className="text-base font-bold mb-2">{s.t}</h4>
                 <p className="text-xs text-muted-foreground leading-relaxed mb-3.5">{s.d}</p>
                 <div className="flex-1">
                   {s.items.map((item) => (
-                    <div key={item} className="flex items-center gap-2 mb-1.5 text-xs text-muted-foreground">
-                      <span className="w-1 h-1 rounded-full bg-primary shrink-0" />
+                    <div
+                      key={item}
+                      className="flex items-center gap-2 mb-1.5 text-xs text-muted-foreground transition-colors duration-100 group-hover:text-foreground/80"
+                    >
+                      <span className="w-1 h-1 rounded-full bg-primary shrink-0 transition-transform duration-100 group-hover:scale-125" />
                       {item}
                     </div>
                   ))}
                 </div>
-                <button className="mt-4 w-full py-2 rounded-lg border-2 border-primary text-primary font-semibold text-xs hover:bg-primary/5 transition-colors">
+                <button className="mt-4 w-full py-2 rounded-lg border-2 border-primary text-primary font-semibold text-xs transition-all duration-100 hover:bg-primary hover:text-white hover:shadow-[0_10px_24px_-12px_rgba(199,37,133,0.8)] active:scale-[0.98] active:shadow-none">
                   {s.cta}
                 </button>
               </div>
@@ -346,12 +359,19 @@ export default function Home() {
       <section
         id="contact"
         ref={contactRef}
-        className="py-16 flex items-center justify-center overflow-hidden"
-        style={{ minHeight: "80vh" }}
+        className="pt-24 md:pt-28 pb-0 flex items-center justify-center overflow-hidden"
+        style={{ minHeight: "100vh" }}
       >
         <div
           className="relative overflow-hidden flex flex-col justify-end"
-          style={{ width: cW, height: cH, borderRadius: cR, transition: "border-radius 50ms linear" }}
+          style={{
+            width: cW,
+            height: cH,
+            borderRadius: cR,
+            transform: `translateY(${dropToBottom}px)`,
+            transition: "border-radius 70ms linear",
+            boxShadow: `0 ${24 + 24 * contactScale}px ${64 + 36 * contactScale}px -26px rgba(26, 10, 40, ${0.28 + contactScale * 0.2})`,
+          }}
         >
           {/* Background gradient */}
           <div
@@ -360,25 +380,28 @@ export default function Home() {
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent z-[2]" />
 
-          {/* Headline rises up as card expands */}
+          {/* Headline stays centered during expansion */}
           <div
-            className="absolute left-0 right-0 text-center z-[3] pointer-events-none"
-            style={{ bottom: -120 + (120 + cH * 0.38) * textRise, opacity: textRise }}
+            className="absolute inset-0 flex items-center justify-center text-center z-[3] pointer-events-none"
+            style={{
+              opacity: textRise,
+              transform: `translateY(${(1 - textRise) * 18}px)`,
+            }}
           >
             <h2
               className="text-white/90 font-black leading-[0.92] tracking-tight"
-              style={{ fontSize: Math.max(32, cW * 0.12) }}
+              style={{ fontSize: Math.max(34, Math.min(96, cW * 0.1)) }}
             >
               Let&apos;s build<br />together.
             </h2>
           </div>
 
-          {/* CTAs — reveal at 75% expansion */}
+          {/* CTAs — reveal at final expansion stage */}
           <div
             className="relative z-[4] flex gap-0 px-6 md:px-12 pb-8 transition-all duration-500"
             style={{
-              opacity:   contactScale > 0.75 ? 1 : 0,
-              transform: contactScale > 0.75 ? "translateY(0)" : "translateY(20px)",
+              opacity:   contactScale > 0.9 ? 1 : 0,
+              transform: contactScale > 0.9 ? "translateY(0)" : "translateY(20px)",
             }}
           >
             <a

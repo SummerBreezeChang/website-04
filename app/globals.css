@@ -98,6 +98,12 @@ html {
   scroll-behavior: smooth;
 }
 
+/* Keep Next.js dev-tools portal from pinning to top-left. */
+nextjs-portal {
+  left: unset !important;
+  top: unset !important;
+}
+
 /* Summer's script logo style */
 .logo-script {
   font-family: 'Pacifico', cursive;
