@@ -11,6 +11,8 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
+  // Pin the app root when another lockfile exists above this folder (e.g. ~/package-lock.json),
+  // so Turbopack does not treat the wrong directory as the workspace root.
   outputFileTracingRoot: __dirname,
   turbopack: {
     root: __dirname,
