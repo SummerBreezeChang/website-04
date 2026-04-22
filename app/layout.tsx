@@ -1,6 +1,7 @@
 import type React from "react"
 import type { Metadata } from "next"
 import { Poppins, Crimson_Text } from "next/font/google"
+import Footer from "@/components/footer"
 import "./globals.css"
 
 const poppins = Poppins({
@@ -35,6 +36,7 @@ export default function RootLayout({
     <html lang="en" className={`${poppins.variable} ${crimsonText.variable}`}>
       <body className="font-sans antialiased">
         {children}
+        <Footer />
       </body>
     </html>
   )

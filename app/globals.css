@@ -40,6 +40,26 @@
   --sidebar-ring: oklch(0.708 0 0);
 }
 
+.dark {
+  --background: oklch(0.19 0.015 270);
+  --foreground: oklch(0.95 0.01 85);
+  --card: oklch(0.24 0.015 270);
+  --card-foreground: oklch(0.95 0.01 85);
+  --popover: oklch(0.24 0.015 270);
+  --popover-foreground: oklch(0.95 0.01 85);
+  --primary: oklch(0.64 0.22 350);
+  --primary-foreground: oklch(0.98 0 0);
+  --secondary: oklch(0.30 0.015 270);
+  --secondary-foreground: oklch(0.95 0.01 85);
+  --muted: oklch(0.28 0.015 270);
+  --muted-foreground: oklch(0.78 0.015 85);
+  --accent: oklch(0.64 0.22 350);
+  --accent-foreground: oklch(0.98 0 0);
+  --border: oklch(0.36 0.015 270);
+  --input: oklch(0.36 0.015 270);
+  --ring: oklch(0.64 0.22 350);
+}
+
 @theme inline {
   --font-sans: "Poppins", "Poppins Fallback", system-ui, sans-serif;
   --font-mono: "JetBrains Mono", "Geist Mono Fallback", monospace;
@@ -141,4 +161,102 @@ nextjs-portal {
 /* Showcase slide visibility */
 .slide-layer { opacity: 0; transition: opacity 0.5s ease; }
 .slide-layer.show { opacity: 1; }
+
+/* Native form input style */
+.input-field {
+  width: 100%;
+  height: 52px;
+  border-radius: 10px;
+  border: 1.5px solid var(--border);
+  background: var(--background);
+  padding: 0 14px;
+  font-size: 14px;
+  color: var(--foreground);
+  outline: none;
+  transition: border-color 180ms ease, box-shadow 180ms ease;
+}
+.input-field:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--primary) 18%, transparent);
+}
+textarea.input-field {
+  height: auto;
+  padding-top: 14px;
+  padding-bottom: 14px;
+}
+select.input-field {
+  appearance: auto;
+}
+
+/* Shared glossy pill style used in hero/nav UI */
+.glass-pill {
+  background: rgba(255, 255, 255, 0.82);
+  border: 1px solid rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(18px) saturate(180%);
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.82);
+}
+
+/* Green status light pulse (heartbeat-like) */
+.status-dot-heartbeat {
+  animation: statusHeartbeat 2.2s ease-in-out infinite;
+  transform-origin: center;
+}
+
+@keyframes statusHeartbeat {
+  0% { transform: scale(1); opacity: 1; box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.35); }
+  14% { transform: scale(1.1); opacity: 1; box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.14); }
+  28% { transform: scale(1); opacity: 0.98; box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
+  42% { transform: scale(1.06); opacity: 1; box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.12); }
+  60% { transform: scale(1); opacity: 1; box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
+  100% { transform: scale(1); opacity: 1; box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
+}
+
+/* Pink glow-outline interaction for CTA buttons */
+.interactive-glow-btn {
+  position: relative;
+}
+.interactive-glow-btn::after {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  border-radius: inherit;
+  border: 0 solid transparent;
+  box-shadow: 0 0 0 0 rgba(232, 34, 141, 0);
+  transition: border-color 220ms ease, box-shadow 220ms ease, opacity 220ms ease;
+  pointer-events: none;
+}
+.interactive-glow-btn:hover::after {
+  border-color: transparent;
+  box-shadow: 0 0 7px rgba(232, 34, 141, 0.32), 0 0 14px rgba(232, 34, 141, 0.14);
+}
+
+/* About page — looping testimonials row */
+@keyframes testimonial-marquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.testimonial-marquee-track {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: stretch;
+  width: max-content;
+  gap: 1rem;
+  animation: testimonial-marquee 55s linear infinite;
+}
+
+.testimonial-marquee-track:hover {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .testimonial-marquee-track {
+    animation: none;
+  }
+}
 

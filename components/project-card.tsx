@@ -6,20 +6,26 @@ import { ArrowUpRight } from "lucide-react"
 import type { ProjectMeta } from "@/lib/types"
 
 export default function ProjectCard({ project }: { project: ProjectMeta }) {
+  const href = project.externalUrl ?? `/projects/${project.slug}?from=home`
+  const Wrapper = project.externalUrl ? "a" : Link
+  const linkProps = project.externalUrl
+    ? { href, target: "_blank" as const, rel: "noopener noreferrer" as const }
+    : { href }
+
   return (
-    <Link href={`/projects/${project.slug}`} className="group block">
+    <Wrapper {...linkProps} className="group block">
       <div className="project-card rounded-2xl overflow-hidden border bg-card">
         {/* Thumbnail */}
         <div
           className="aspect-[4/3] relative overflow-hidden"
           style={{ backgroundColor: project.color }}
         >
-          {/* Placeholder content — swap with real images */}
-          <div className="w-full h-full flex items-center justify-center p-6">
-            <span className="text-white/80 text-sm font-medium text-center">
-              {project.title} thumbnail
-            </span>
-          </div>
+          <img
+            src={project.thumbnail}
+            alt={`${project.title} preview`}
+            className="absolute inset-0 w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/35 to-transparent" />
           <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
           <div className="absolute top-3 right-3">
             <Badge variant="secondary" className="bg-white/90 backdrop-blur-sm text-xs">
@@ -39,12 +45,16 @@ export default function ProjectCard({ project }: { project: ProjectMeta }) {
             <Badge variant="outline" className="text-xs text-primary border-primary/30">
               {project.categoryLabel}
             </Badge>
+            {project.externalUrl ? (
+              <span className="text-[10px] text-muted-foreground">External</span>
+            ) : null}
           </div>
           <h3 className="font-semibold text-lg mb-1 group-hover:text-primary transition-colors">
             {project.title}
           </h3>
-          <p className="text-muted-foreground text-sm leading-relaxed line-clamp-2">
-            {project.subtitle}
+          <p className="mt-0.5 text-sm leading-relaxed line-clamp-2 min-h-[2.75rem] text-muted-foreground">
+            <span className="font-medium text-foreground/90">{project.subtitle}</span>
+            <span> {project.tldr}</span>
           </p>
           {project.tags.length > 0 && (
             <div className="flex flex-wrap gap-1.5 mt-3">
@@ -63,6 +73,6 @@ export default function ProjectCard({ project }: { project: ProjectMeta }) {
           )}
         </div>
       </div>
-    </Link>
+    </Wrapper>
   )
 }

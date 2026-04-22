@@ -55,4 +55,6 @@ export interface ProjectMeta {
   sections: Section[]
   nextBox?: { text: string }
   ctaBox?: { title: string; desc: string; label: string; url: string }
+  /** When set, cards link here instead of `/projects/[slug]` (no internal case study). */
+  externalUrl?: string
 }
