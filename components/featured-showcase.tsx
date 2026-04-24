@@ -12,6 +12,7 @@ import { useEffect, useRef } from "react"
 import Link from "next/link"
 import type { ProjectMeta } from "@/lib/types"
 import { getBentoImage } from "@/lib/bento-image"
+import { PROJECT_DETAILS_ENABLED } from "@/lib/site-flags"
 
 interface Props {
   projects: ProjectMeta[]
@@ -19,6 +20,22 @@ interface Props {
 
 function bentoIconSrc(slug: string) {
   return `/projects/${slug}/bento-icon.png`
+}
+
+function showcaseVideoSrc(slug: string) {
+  if (slug === "bookee") return "/projects/bookee/bookee-showcase.mp4?v=20260422-145155"
+  if (slug === "playdates") return "/projects/playdates/playdates-showcase.mp4?v=20260422-180321"
+  if (slug === "petcard") return "/projects/petcard/petcard-showcase.mp4?v=20260422-133413"
+  if (slug === "notion-client-intake") return "/projects/notion-client-intake/notion-client-intake-showcase.mp4?v=20260422-200559"
+  if (slug === "reelwish") return "/projects/reelwish/showcase.mp4?v=20260423-103435"
+  if (slug === "mina") return "/projects/mina/mina-showcase.mp4?v=20260422-134052"
+  return null
+}
+
+function showcaseMediaPositionClass(slug: string) {
+  if (slug === "petcard") return "absolute inset-0 h-full w-full object-contain"
+  if (slug === "mina") return "absolute right-0 bottom-0 h-full w-full object-cover"
+  return "absolute inset-0 h-full w-full object-cover"
 }
 
 export default function FeaturedShowcase({ projects }: Props) {
@@ -29,14 +46,34 @@ export default function FeaturedShowcase({ projects }: Props) {
   const CARD_GAP_PX = 48
 
   const sectionRef = useRef<HTMLElement>(null)
+  const stickyPanelRef = useRef<HTMLDivElement>(null)
   const trackRef   = useRef<HTMLDivElement>(null)
   const counterRef = useRef<HTMLDivElement>(null)
+  const hasEnteredRef = useRef(false)
+  const activeIndexRef = useRef(-1)
+  const videoRefs = useRef<(HTMLVideoElement | null)[]>([])
 
   useEffect(() => {
+    const restartVideoAt = (index: number) => {
+      const video = videoRefs.current[index]
+      if (!video) return
+      try {
+        video.currentTime = 0
+      } catch {
+        // Some browsers block seeking until metadata is available.
+      }
+      video
+        .play()
+        .catch(() => {
+          // Ignore autoplay promise rejections in restrictive browsers.
+        })
+    }
+
     const update = () => {
       const section = sectionRef.current
+      const stickyPanel = stickyPanelRef.current
       const track   = trackRef.current
-      if (!section || !track) return
+      if (!section || !track || !stickyPanel) return
 
       // Document-space top of the section, plus its total scrollable height
       const rect        = section.getBoundingClientRect()
@@ -49,6 +86,12 @@ export default function FeaturedShowcase({ projects }: Props) {
 
       const sy = window.scrollY
       const progress = Math.max(0, Math.min(1, (sy - sectionTop) / maxScroll))
+      const inSection = sy + winH > sectionTop && sy < sectionTop + sectionH
+      const enterTriggerY = sectionTop - winH * 0.18
+      if (!hasEnteredRef.current && sy >= enterTriggerY) {
+        hasEnteredRef.current = true
+        stickyPanel.style.transform = "translateY(0px)"
+      }
       const rawIndex = progress * (N - 1)
       // Snap to project index so each scroll step advances one grouped card state.
       const active = Math.min(N - 1, Math.max(0, Math.round(rawIndex)))
@@ -60,6 +103,11 @@ export default function FeaturedShowcase({ projects }: Props) {
       const tx = Math.min(rawTx, maxTx)
       track.style.transform = `translate3d(-${tx}px, 0, 0)`
       track.style.transition = "transform 360ms cubic-bezier(0.22, 1, 0.36, 1)"
+
+      if (inSection && activeIndexRef.current !== active) {
+        activeIndexRef.current = active
+        restartVideoAt(active)
+      }
 
       // Update counter imperatively
       if (counterRef.current) {
@@ -85,7 +133,15 @@ export default function FeaturedShowcase({ projects }: Props) {
       style={{ height: `calc(${100 + (N - 1) * STEP_VH * 100}vh - 60px)` }}
     >
       {/* Sticky viewport panel with padding — creates inset effect */}
-      <div className="sticky top-0 h-screen w-full overflow-hidden bg-background flex flex-col p-4 md:px-[60px] md:pb-[60px] md:pt-[120px]">
+      <div
+        ref={stickyPanelRef}
+        className="sticky top-0 h-screen w-full overflow-hidden bg-background flex flex-col p-4 md:px-[60px] md:pb-[60px] md:pt-[120px]"
+        style={{
+          transform: "translateY(140px)",
+          transition: "transform 700ms cubic-bezier(0.22, 1, 0.36, 1)",
+          willChange: "transform",
+        }}
+      >
 
         {/* Counter — top right (updated imperatively) */}
         <div
@@ -103,21 +159,33 @@ export default function FeaturedShowcase({ projects }: Props) {
             className="flex h-full gap-12"
             style={{ willChange: "transform" }}
           >
-            {projects.map((p) => (
-              <Link
-                key={p.slug}
-                href={`/projects/${p.slug}?from=home`}
-                className="h-full shrink-0 basis-full relative flex flex-col text-left group"
-              >
+            {projects.map((p, i) => {
+              const cardBody = (
+                <>
                 {/* Image-first: no text overlay — matches Section 2 bento readability */}
                 <div className="relative flex-1 min-h-[52vh] md:min-h-[58vh] rounded-md overflow-hidden">
-                  <div
-                    className="absolute inset-0 bg-cover bg-center"
-                    style={{
-                      backgroundColor: p.color,
-                      backgroundImage: `url(${getBentoImage(p.slug)}), url(${p.thumbnail})`,
-                    }}
-                  />
+                  {showcaseVideoSrc(p.slug) ? (
+                    <video
+                      ref={(el) => {
+                        videoRefs.current[i] = el
+                      }}
+                      className={showcaseMediaPositionClass(p.slug)}
+                      src={showcaseVideoSrc(p.slug) ?? undefined}
+                      autoPlay
+                      muted
+                      loop
+                      playsInline
+                      preload="metadata"
+                    />
+                  ) : (
+                    <div
+                      className="absolute inset-0 bg-cover bg-center"
+                      style={{
+                        backgroundColor: p.color,
+                        backgroundImage: `url(${getBentoImage(p.slug)}), url(${p.thumbnail})`,
+                      }}
+                    />
+                  )}
                 </div>
 
                 <div className="relative z-10 shrink-0 px-5 py-4 md:px-8 md:py-5 bg-transparent">
@@ -150,8 +218,24 @@ export default function FeaturedShowcase({ projects }: Props) {
                     </span>
                   </div>
                 </div>
-              </Link>
-            ))}
+                </>
+              )
+
+              const commonClassName = "h-full shrink-0 basis-full relative flex flex-col text-left group"
+              if (!PROJECT_DETAILS_ENABLED) {
+                return (
+                  <div key={p.slug} className={commonClassName}>
+                    {cardBody}
+                  </div>
+                )
+              }
+
+              return (
+                <Link key={p.slug} href={`/projects/${p.slug}?from=home`} className={commonClassName}>
+                  {cardBody}
+                </Link>
+              )
+            })}
           </div>
         </div>
       </div>

@@ -1,9 +1,15 @@
+import { redirect } from "next/navigation"
 import Link from "next/link"
 import { ArrowLeft } from "lucide-react"
 import Navigation from "@/components/navigation"
 import { projects } from "@/lib/projects-v2"
+import { PROJECT_DETAILS_ENABLED } from "@/lib/site-flags"
 
 export default function MoreProjectsPage() {
+  if (!PROJECT_DETAILS_ENABLED) {
+    redirect("/")
+  }
+
   const nonFeatured = projects.filter((p) => !p.featured)
 
   return (
