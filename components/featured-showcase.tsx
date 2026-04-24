@@ -8,7 +8,7 @@
 //  - translateX applied imperatively via ref (no React state, no library)
 // ═══════════════════════════════════════════════════════════════════════════
 
-import { useEffect, useRef } from "react"
+import { useEffect, useRef, useState } from "react"
 import Link from "next/link"
 import type { ProjectMeta } from "@/lib/types"
 import { getBentoImage } from "@/lib/bento-image"
@@ -22,8 +22,12 @@ function bentoIconSrc(slug: string) {
   return `/projects/${slug}/bento-icon.png`
 }
 
-function showcaseVideoSrc(slug: string) {
-  if (slug === "bookee") return "/projects/bookee/bookee-showcase.mp4?v=20260424-assetfix"
+function showcaseVideoSrc(slug: string, isMobile: boolean) {
+  if (slug === "bookee") {
+    return isMobile
+      ? "/projects/bookee/bookee-showcase-mobile.mp4?v=20260424-mobilefix"
+      : "/projects/bookee/bookee-showcase.mp4?v=20260424-assetfix"
+  }
   if (slug === "playdates") return "/projects/playdates/playdates-showcase.mp4?v=20260424-assetfix"
   if (slug === "petcard") return "/projects/petcard/petcard-showcase.mp4?v=20260424-assetfix"
   if (slug === "notion-client-intake") return "/projects/notion-client-intake/notion-client-intake-showcase.mp4?v=20260424-assetfix"
@@ -51,6 +55,14 @@ export default function FeaturedShowcase({ projects }: Props) {
   const hasEnteredRef = useRef(false)
   const activeIndexRef = useRef(-1)
   const videoRefs = useRef<(HTMLVideoElement | null)[]>([])
+  const [isMobile, setIsMobile] = useState(false)
+
+  useEffect(() => {
+    const updateMobile = () => setIsMobile(window.innerWidth < 768)
+    updateMobile()
+    window.addEventListener("resize", updateMobile)
+    return () => window.removeEventListener("resize", updateMobile)
+  }, [])
 
   useEffect(() => {
     const restartVideoAt = (index: number) => {
@@ -163,13 +175,13 @@ export default function FeaturedShowcase({ projects }: Props) {
                 <>
                 {/* Image-first: no text overlay — matches Section 2 bento readability */}
                 <div className="relative flex-1 min-h-[56vh] md:min-h-[64vh] rounded-md overflow-hidden">
-                  {showcaseVideoSrc(p.slug) ? (
+                  {showcaseVideoSrc(p.slug, isMobile) ? (
                     <video
                       ref={(el) => {
                         videoRefs.current[i] = el
                       }}
                       className={showcaseMediaPositionClass(p.slug)}
-                      src={showcaseVideoSrc(p.slug) ?? undefined}
+                      src={showcaseVideoSrc(p.slug, isMobile) ?? undefined}
                       autoPlay
                       muted
                       loop
