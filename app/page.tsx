@@ -275,7 +275,7 @@ export default function Home() {
   const dropToBottom = stageB * Math.max(0, (vh - cH) / 2) + stageB * navClearance
   // Drive headline size directly with contact expansion so it reaches
   // a bold, Featured-Work-like presence at the final stage.
-  const contactHeadlineMax = Math.max(112, Math.min(220, cW * 0.22, cH * 0.42))
+  const contactHeadlineMax = Math.max(112, Math.min(180, cW * 0.22, cH * 0.42))
   const contactHeadlineSize = lerp(46, contactHeadlineMax, textRise)
 
   const sectionRevealStyle = (visible: boolean, y = 28) => ({
@@ -627,7 +627,7 @@ export default function Home() {
             className="absolute inset-0 z-[1] w-full h-full object-cover pointer-events-none"
           />
           <img
-            src="/end.png?v=20260423-2245"
+            src="/end.png?v=20260424-001"
             alt=""
             className="absolute inset-0 z-[2] w-full h-full object-cover pointer-events-none"
             style={{ opacity: endSceneOpacity }}
