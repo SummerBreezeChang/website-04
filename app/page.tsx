@@ -14,6 +14,7 @@ import Link from "next/link"
 import { ArrowUpRight } from "lucide-react"
 import { getFeaturedProjects } from "@/lib/projects-v2"
 import { getBentoImage } from "@/lib/bento-image"
+import { PROJECT_DETAILS_ENABLED } from "@/lib/site-flags"
 import Navigation from "@/components/navigation"
 import FeaturedShowcase from "@/components/featured-showcase"
 
@@ -413,19 +414,9 @@ export default function Home() {
             className="grid gap-2"
             style={{ gridTemplateColumns: "repeat(12, 1fr)", gridAutoRows: 120 }}
           >
-            {featured.map((p, i) => (
-              <Link
-                key={p.slug}
-                href={`/projects/${p.slug}?from=home`}
-                className="rounded-2xl relative cursor-pointer group bg-card flex flex-col p-2"
-                style={{
-                  gridColumn:      bento[bentoSlotBySlug[p.slug] ?? i]?.col,
-                  gridRow:         bento[bentoSlotBySlug[p.slug] ?? i]?.row,
-                  // Cards appear exactly when floating cards fade out
-                  opacity:    sp > 0.85 ? 1 : 0,
-                  transition: `opacity .4s ease ${i * 0.05}s`,
-                }}
-              >
+            {featured.map((p, i) => {
+              const cardBody = (
+                <>
                 {/* Invisible ref div so we can measure card center for flying animation */}
                 <div
                   ref={(el) => { cardRefs.current[i] = el as HTMLDivElement }}
@@ -473,8 +464,36 @@ export default function Home() {
                 <div className="absolute top-3 right-3 z-20 w-7 h-7 rounded-full bg-white/0 group-hover:bg-white/90 flex items-center justify-center transition-all opacity-0 group-hover:opacity-100">
                   <ArrowUpRight className="w-3.5 h-3.5 text-foreground" />
                 </div>
-              </Link>
-            ))}
+                </>
+              )
+
+              const commonClassName = "rounded-2xl relative cursor-pointer group bg-card flex flex-col p-2"
+              const commonStyle = {
+                gridColumn: bento[bentoSlotBySlug[p.slug] ?? i]?.col,
+                gridRow: bento[bentoSlotBySlug[p.slug] ?? i]?.row,
+                opacity: sp > 0.85 ? 1 : 0,
+                transition: `opacity .4s ease ${i * 0.05}s`,
+              }
+
+              if (!PROJECT_DETAILS_ENABLED) {
+                return (
+                  <div key={p.slug} className={commonClassName} style={commonStyle}>
+                    {cardBody}
+                  </div>
+                )
+              }
+
+              return (
+                <Link
+                  key={p.slug}
+                  href={`/projects/${p.slug}?from=home`}
+                  className={commonClassName}
+                  style={commonStyle}
+                >
+                  {cardBody}
+                </Link>
+              )
+            })}
           </div>
         </div>
       </section>
@@ -486,12 +505,18 @@ export default function Home() {
 
       {/* ═══ SEE MORE ═══ */}
       <section ref={seeMoreRef} className="-mt-[60px] py-12 text-center px-4" style={sectionRevealStyle(revealVisible.seeMore, 24)}>
-        <Link
-          href="/more"
-          className="interactive-glow-btn -mt-6 inline-flex items-center justify-center px-7 py-3 rounded-full bg-primary text-white text-base font-semibold shadow-[0_16px_40px_-18px_rgba(199,37,133,0.85)] hover:bg-primary/90 transition-colors"
-        >
-          See more projects
-        </Link>
+        {PROJECT_DETAILS_ENABLED ? (
+          <Link
+            href="/more"
+            className="interactive-glow-btn -mt-6 inline-flex items-center justify-center px-7 py-3 rounded-full bg-primary text-white text-base font-semibold shadow-[0_16px_40px_-18px_rgba(199,37,133,0.85)] hover:bg-primary/90 transition-colors"
+          >
+            See more projects
+          </Link>
+        ) : (
+          <span className="inline-flex -mt-6 items-center justify-center px-7 py-3 rounded-full bg-muted text-foreground/70 text-base font-semibold">
+            Case studies coming soon
+          </span>
+        )}
         <p className="text-xs text-muted-foreground mt-3">
           TCA Alliance · ReKeepIt · Client Ops Kit · Alacrity · Café Noir · more
         </p>
