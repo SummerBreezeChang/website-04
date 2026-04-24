@@ -48,6 +48,10 @@ export default function Home() {
 
   const featured = getFeaturedProjects()
   const N = featured.length // should be 6
+  const featuredIndexBySlug = featured.reduce<Record<string, number>>((acc, project, index) => {
+    acc[project.slug] = index
+    return acc
+  }, {})
 
   /** Square app icon in the bento metadata row: `/projects/<slug>/bento-icon.png` (optional). */
   const getBentoIconSrc = (slug: string) => {
@@ -94,12 +98,12 @@ export default function Home() {
     { gi: 4, ix: 86, iy: 86, dy: -48, r:   3, w: 216, h: 136 },
   ]
   const floatingCardsMobile = [
-    { gi: 0, ix: 16, iy: 30, dx: 0,  dy: 0,  r: -6, w: 120, h: 152 },
-    { gi: 1, ix: 36, iy: 52, dx: 0,  dy: 0,  r: -4, w: 126, h: 96 },
-    { gi: 5, ix: 24, iy: 73, dx: 0,  dy: 0,  r: -3, w: 126, h: 96 },
-    { gi: 2, ix: 82, iy: 28, dx: 0,  dy: 0,  r: 5,  w: 98,  h: 152 },
-    { gi: 3, ix: 78, iy: 53, dx: 0,  dy: 0,  r: 4,  w: 122, h: 122 },
-    { gi: 4, ix: 82, iy: 74, dx: 0,  dy: 0,  r: 3,  w: 128, h: 92 },
+    { slug: "bookee", gi: featuredIndexBySlug.bookee ?? 0, ix: 14, iy: 15, dx: -2, dy: 0, r: -7, w: 110, h: 148 },
+    { slug: "petcard", gi: featuredIndexBySlug.petcard ?? 2, ix: 84, iy: 15, dx: 0, dy: 0, r: 6, w: 100, h: 158 },
+    { slug: "notion-client-intake", gi: featuredIndexBySlug["notion-client-intake"] ?? 3, ix: 82, iy: 55, dx: 0, dy: 0, r: 3, w: 112, h: 112 },
+    { slug: "reelwish", gi: featuredIndexBySlug.reelwish ?? 5, ix: 16, iy: 62, dx: 0, dy: 0, r: -3, w: 126, h: 94 },
+    { slug: "playdates", gi: featuredIndexBySlug.playdates ?? 1, ix: 20, iy: 80, dx: 0, dy: 0, r: -2, w: 130, h: 92 },
+    { slug: "mina", gi: featuredIndexBySlug.mina ?? 4, ix: 82, iy: 79, dx: 0, dy: 0, r: 3, w: 124, h: 90 },
   ]
   const isMobile = vw < 768
   const activeFloatingCards = isMobile ? floatingCardsMobile : floatingCards
@@ -371,14 +375,14 @@ export default function Home() {
           }}
         >
           <div className="flex justify-center gap-2 mb-5 flex-wrap">
-            <span className="glass-pill text-xs font-medium px-4 py-1.5 rounded-full flex items-center gap-2 text-[#111827]">
+            <span className="glass-pill text-[11px] md:text-xs font-medium px-3 md:px-4 py-1 md:py-1.5 rounded-full flex items-center gap-2 text-[#111827]">
               <span className="status-dot-heartbeat w-2 h-2 rounded-full bg-green-500 shadow-[0_0_6px_#22C55E]" />
               Available for work
             </span>
           </div>
-          <h1 className="text-3xl md:text-5xl font-bold leading-tight mb-5 font-mono tracking-tight">
+          <h1 className="text-[38px] md:text-5xl font-bold leading-tight mb-3 md:mb-5 font-mono tracking-tight">
             <span className="block -translate-y-[8px]">I design products</span>
-            <span className="block text-primary mb-[44px]">
+            <span className="block text-primary mb-[20px] md:mb-[44px]">
               that are {heroTypedText}
               <span className="inline-block ml-0.5 animate-pulse">|</span>
             </span>
@@ -387,11 +391,11 @@ export default function Home() {
             <Link
                   href="#projects"
                   onClick={scrollToProjectsCenter}
-                  className="interactive-glow-btn bg-primary text-white px-6 py-3 rounded-full text-sm font-semibold hover:bg-primary/90 transition-colors">
+                  className="interactive-glow-btn bg-primary text-white px-5 md:px-6 py-2.5 md:py-3 rounded-full text-[13px] md:text-sm font-semibold hover:bg-primary/90 transition-colors">
               Explore my work
             </Link>
             <Link href="/contact"
-                  className="interactive-glow-btn glass-pill px-6 py-3 rounded-full text-sm font-semibold text-[#111827] hover:brightness-[1.02] transition">
+                  className="interactive-glow-btn glass-pill px-5 md:px-6 py-2.5 md:py-3 rounded-full text-[13px] md:text-sm font-semibold text-[#111827] hover:brightness-[1.02] transition">
               Get in touch
             </Link>
           </div>
@@ -427,7 +431,7 @@ export default function Home() {
             className="grid gap-2"
             style={{
               gridTemplateColumns: isMobile ? "repeat(2, minmax(0, 1fr))" : "repeat(12, 1fr)",
-              gridAutoRows: isMobile ? 116 : 120,
+              gridAutoRows: isMobile ? 126 : 120,
             }}
           >
             {featured.map((p, i) => {
@@ -486,7 +490,9 @@ export default function Home() {
               const commonClassName = "rounded-2xl relative cursor-pointer group bg-card flex flex-col p-2"
               const commonStyle = {
                 gridColumn: isMobile ? undefined : bento[bentoSlotBySlug[p.slug] ?? i]?.col,
-                gridRow: isMobile ? undefined : bento[bentoSlotBySlug[p.slug] ?? i]?.row,
+                gridRow: isMobile
+                  ? (i % 3 === 1 ? "span 2" : undefined)
+                  : bento[bentoSlotBySlug[p.slug] ?? i]?.row,
                 opacity: sp > (isMobile ? 0.72 : 0.85) ? 1 : 0,
                 transition: `opacity .4s ease ${i * 0.05}s`,
               }
@@ -671,7 +677,7 @@ export default function Home() {
             className="absolute inset-0 z-[1] w-full h-full object-cover pointer-events-none"
           />
           <img
-            src={vw < 768 ? "/end-mobile.png?v=20260424-mobilefix-2" : "/end.png?v=20260424-002"}
+            src={vw < 768 ? "/end-mobile.png?v=20260424-mobilefix-3" : "/end.png?v=20260424-002"}
             alt=""
             className="absolute inset-0 z-[2] w-full h-full object-cover pointer-events-none"
             style={{ opacity: endSceneOpacity }}
@@ -687,8 +693,8 @@ export default function Home() {
             style={{
               opacity: headlineReveal,
               transform: headlineReveal >= 1
-                ? `translate(0px, ${isMobile ? 8 : 72}px)`
-                : `translate(${(1 - headlineReveal) * -36}px, ${isMobile ? 8 : 72}px)`,
+                ? `translate(0px, ${isMobile ? 128 : 72}px)`
+                : `translate(${(1 - headlineReveal) * -36}px, ${isMobile ? 128 : 72}px)`,
             }}
           >
             <h2

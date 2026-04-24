@@ -205,7 +205,7 @@ export default function FeaturedShowcase({ projects }: Props) {
                       <img
                         src={bentoIconSrc(p.slug)}
                         alt=""
-                        className="size-[30px] rounded-[4px] object-cover shrink-0 ring-1 ring-black/5 mt-px"
+                        className="size-[20px] md:size-[30px] rounded-[4px] object-cover shrink-0 ring-1 ring-black/5 mt-px"
                         onError={(e) => {
                           const el = e.currentTarget
                           el.onerror = null
@@ -216,15 +216,15 @@ export default function FeaturedShowcase({ projects }: Props) {
                         <h2 className="text-[18px] md:text-[24px] font-semibold leading-tight text-foreground truncate">
                           {p.title}
                         </h2>
-                        <p className="text-[12px] md:text-[14px] text-muted-foreground leading-snug line-clamp-2 mt-0.5">
+                        <p className="hidden md:block text-[12px] md:text-[14px] text-muted-foreground leading-snug line-clamp-2 mt-0.5">
                           {p.subtitle}
                         </p>
-                        <span className="mt-3 inline-flex w-fit items-center gap-1.5 whitespace-nowrap text-xs md:text-sm font-semibold text-foreground bg-white px-4 py-2 rounded-full shadow-[0_10px_24px_-16px_rgba(0,0,0,0.35)] group-hover:bg-white/90 transition-colors">
+                        <span className="mt-6 inline-flex w-fit items-center gap-1.5 whitespace-nowrap text-xs md:text-sm font-semibold text-foreground bg-white px-4 py-2 rounded-full shadow-[0_10px_24px_-16px_rgba(0,0,0,0.35)] group-hover:bg-white/90 transition-colors">
                           View case study
                         </span>
                       </div>
                     </div>
-                    <span className="shrink-0 self-start inline-flex items-center text-[12px] font-medium text-foreground/80 bg-muted px-3 py-1.5 rounded-[6px]">
+                    <span className="hidden md:inline-flex shrink-0 self-start items-center text-[12px] font-medium text-foreground/80 bg-muted px-3 py-1.5 rounded-[6px]">
                       {[p.year, ...(p.badges ?? []), p.categoryLabel].join(" ")}
                     </span>
                   </div>
