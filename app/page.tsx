@@ -652,7 +652,7 @@ export default function Home() {
             className="absolute inset-0 z-[1] w-full h-full object-cover pointer-events-none"
           />
           <img
-            src="/end.png?v=20260424-001"
+            src="/end.png?v=20260424-002"
             alt=""
             className="absolute inset-0 z-[2] w-full h-full object-cover pointer-events-none"
             style={{ opacity: endSceneOpacity }}

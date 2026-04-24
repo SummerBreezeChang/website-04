@@ -23,17 +23,16 @@ function bentoIconSrc(slug: string) {
 }
 
 function showcaseVideoSrc(slug: string) {
-  if (slug === "bookee") return "/projects/bookee/bookee-showcase.mp4?v=20260422-145155"
-  if (slug === "playdates") return "/projects/playdates/playdates-showcase.mp4?v=20260422-180321"
-  if (slug === "petcard") return "/projects/petcard/petcard-showcase.mp4?v=20260422-133413"
-  if (slug === "notion-client-intake") return "/projects/notion-client-intake/notion-client-intake-showcase.mp4?v=20260422-200559"
-  if (slug === "reelwish") return "/projects/reelwish/showcase.mp4?v=20260423-103435"
-  if (slug === "mina") return "/projects/mina/mina-showcase.mp4?v=20260422-134052"
+  if (slug === "bookee") return "/projects/bookee/bookee-showcase.mp4?v=20260424-assetfix"
+  if (slug === "playdates") return "/projects/playdates/playdates-showcase.mp4?v=20260424-assetfix"
+  if (slug === "petcard") return "/projects/petcard/petcard-showcase.mp4?v=20260424-assetfix"
+  if (slug === "notion-client-intake") return "/projects/notion-client-intake/notion-client-intake-showcase.mp4?v=20260424-assetfix"
+  if (slug === "reelwish") return "/projects/reelwish/showcase.mp4?v=20260424-assetfix"
+  if (slug === "mina") return "/projects/mina/mina-showcase.mp4?v=20260424-assetfix"
   return null
 }
 
 function showcaseMediaPositionClass(slug: string) {
-  if (slug === "petcard") return "absolute inset-0 h-full w-full object-contain"
   if (slug === "mina") return "absolute right-0 bottom-0 h-full w-full object-cover"
   return "absolute inset-0 h-full w-full object-cover"
 }
@@ -163,7 +162,7 @@ export default function FeaturedShowcase({ projects }: Props) {
               const cardBody = (
                 <>
                 {/* Image-first: no text overlay — matches Section 2 bento readability */}
-                <div className="relative flex-1 min-h-[52vh] md:min-h-[58vh] rounded-md overflow-hidden">
+                <div className="relative flex-1 min-h-[56vh] md:min-h-[64vh] rounded-md overflow-hidden">
                   {showcaseVideoSrc(p.slug) ? (
                     <video
                       ref={(el) => {
