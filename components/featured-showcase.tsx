@@ -199,7 +199,7 @@ export default function FeaturedShowcase({ projects }: Props) {
                   )}
                 </div>
 
-                <div className="relative z-10 shrink-0 px-5 py-4 md:px-8 md:py-5 bg-transparent">
+                <div className="relative z-10 shrink-0 px-4 py-4 md:px-8 md:py-5 bg-transparent">
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex items-start gap-2.5 min-w-0">
                       <img
@@ -212,14 +212,14 @@ export default function FeaturedShowcase({ projects }: Props) {
                           el.src = "/favicon-s.png"
                         }}
                       />
-                      <div className="min-w-0 ml-[18px]">
-                        <h2 className="text-[24px] font-semibold leading-tight text-foreground truncate">
+                      <div className="min-w-0 ml-[14px]">
+                        <h2 className="text-[18px] md:text-[24px] font-semibold leading-tight text-foreground truncate">
                           {p.title}
                         </h2>
-                        <p className="text-[14px] text-muted-foreground leading-snug line-clamp-2 mt-0.5">
+                        <p className="text-[12px] md:text-[14px] text-muted-foreground leading-snug line-clamp-2 mt-0.5">
                           {p.subtitle}
                         </p>
-                        <span className="mt-3 inline-flex w-fit items-center gap-1.5 text-xs md:text-sm font-semibold text-foreground bg-white px-4 py-2 rounded-full shadow-[0_10px_24px_-16px_rgba(0,0,0,0.35)] group-hover:bg-white/90 transition-colors">
+                        <span className="mt-3 inline-flex w-fit items-center gap-1.5 whitespace-nowrap text-xs md:text-sm font-semibold text-foreground bg-white px-4 py-2 rounded-full shadow-[0_10px_24px_-16px_rgba(0,0,0,0.35)] group-hover:bg-white/90 transition-colors">
                           View case study
                         </span>
                       </div>

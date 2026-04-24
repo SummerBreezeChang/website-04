@@ -93,6 +93,16 @@ export default function Home() {
     { gi: 3, ix: 88, iy: 60, dy: -48, r:   4, w: 202, h: 202 },
     { gi: 4, ix: 86, iy: 86, dy: -48, r:   3, w: 216, h: 136 },
   ]
+  const floatingCardsMobile = [
+    { gi: 0, ix: 16, iy: 30, dx: 0,  dy: 0,  r: -6, w: 120, h: 152 },
+    { gi: 1, ix: 36, iy: 52, dx: 0,  dy: 0,  r: -4, w: 126, h: 96 },
+    { gi: 5, ix: 24, iy: 73, dx: 0,  dy: 0,  r: -3, w: 126, h: 96 },
+    { gi: 2, ix: 82, iy: 28, dx: 0,  dy: 0,  r: 5,  w: 98,  h: 152 },
+    { gi: 3, ix: 78, iy: 53, dx: 0,  dy: 0,  r: 4,  w: 122, h: 122 },
+    { gi: 4, ix: 82, iy: 74, dx: 0,  dy: 0,  r: 3,  w: 128, h: 92 },
+  ]
+  const isMobile = vw < 768
+  const activeFloatingCards = isMobile ? floatingCardsMobile : floatingCards
 
   // Section 1 floating cards image naming:
   // - /projects/<slug>/float-portrait.jpg
@@ -200,7 +210,7 @@ export default function Home() {
         setServicesVisible(inView)
         setServicesAnchored(inView)
       },
-      { threshold: 0.1 }
+      { threshold: 0.06, rootMargin: "0px 0px -6% 0px" }
     )
 
     observer.observe(section)
@@ -277,8 +287,10 @@ export default function Home() {
   const dropToBottom = stageB * Math.max(0, (vh - cH) / 2) + stageB * navClearance
   // Drive headline size directly with contact expansion so it reaches
   // a bold, Featured-Work-like presence at the final stage.
-  const contactHeadlineMax = Math.max(112, Math.min(180, cW * 0.22, cH * 0.42))
-  const contactHeadlineSize = lerp(46, contactHeadlineMax, textRise)
+  const contactHeadlineMax = isMobile
+    ? Math.max(72, Math.min(92, cW * 0.18, cH * 0.2))
+    : Math.max(112, Math.min(180, cW * 0.22, cH * 0.42))
+  const contactHeadlineSize = lerp(isMobile ? 34 : 46, contactHeadlineMax, textRise)
 
   const sectionRevealStyle = (visible: boolean, y = 28) => ({
     opacity: visible ? 1 : 0,
@@ -310,7 +322,7 @@ export default function Home() {
       <Navigation />
 
       {/* ═══ SECTION 1: FLOATING CARDS (fixed, animated into bento) ═══ */}
-      {floatingCards.map((c, i) => {
+      {activeFloatingCards.map((c, i) => {
         const g  = gridPositions[c.gi] || { x: 0, y: 0, width: c.w, height: c.h }
         const p  = featured[c.gi]
         // Start position (% of viewport)
@@ -390,7 +402,7 @@ export default function Home() {
       <section
         id="projects"
         ref={projectsRef}
-        className="px-4 pb-14 md:pb-16 -mt-[240px] md:-mt-[248px]"
+        className={`px-4 ${isMobile ? "pb-10 -mt-[128px]" : "pb-14 md:pb-16 -mt-[240px] md:-mt-[248px]"}`}
         style={{
           // Fade in as scroll progresses past 25%
           opacity:    sp > 0.25 ? Math.min(1, (sp - 0.25) * 3) : 0,
@@ -398,7 +410,7 @@ export default function Home() {
           transition: "opacity .4s, transform .4s",
         }}
       >
-        <div ref={projectsCardRef} className="max-w-6xl mx-auto bg-card rounded-3xl border p-6">
+        <div ref={projectsCardRef} className={`max-w-6xl mx-auto bg-card rounded-3xl border ${isMobile ? "p-3" : "p-6"}`}>
           {/* Header */}
           <div className="flex items-center gap-4 mb-6">
             <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-white shadow-[0_0_0_2px_theme(colors.pink.100)] shrink-0">
@@ -413,7 +425,10 @@ export default function Home() {
           {/* 12-column bento grid */}
           <div
             className="grid gap-2"
-            style={{ gridTemplateColumns: "repeat(12, 1fr)", gridAutoRows: 120 }}
+            style={{
+              gridTemplateColumns: isMobile ? "repeat(2, minmax(0, 1fr))" : "repeat(12, 1fr)",
+              gridAutoRows: isMobile ? 116 : 120,
+            }}
           >
             {featured.map((p, i) => {
               const cardBody = (
@@ -470,9 +485,9 @@ export default function Home() {
 
               const commonClassName = "rounded-2xl relative cursor-pointer group bg-card flex flex-col p-2"
               const commonStyle = {
-                gridColumn: bento[bentoSlotBySlug[p.slug] ?? i]?.col,
-                gridRow: bento[bentoSlotBySlug[p.slug] ?? i]?.row,
-                opacity: sp > 0.85 ? 1 : 0,
+                gridColumn: isMobile ? undefined : bento[bentoSlotBySlug[p.slug] ?? i]?.col,
+                gridRow: isMobile ? undefined : bento[bentoSlotBySlug[p.slug] ?? i]?.row,
+                opacity: sp > (isMobile ? 0.72 : 0.85) ? 1 : 0,
                 transition: `opacity .4s ease ${i * 0.05}s`,
               }
 
@@ -519,7 +534,10 @@ export default function Home() {
           </span>
         )}
         <p className="text-xs text-muted-foreground mt-3">
-          TCA Alliance · ReKeepIt · Client Ops Kit · Alacrity · Café Noir · more
+          TCA Alliance · ReKeepIt · Client Ops Kit
+          <br className="md:hidden" />
+          <span className="hidden md:inline"> · </span>
+          Alacrity · Café Noir · more
         </p>
       </section>
 
@@ -536,7 +554,7 @@ export default function Home() {
       >
         <div className="max-w-6xl mx-auto min-h-[78vh] md:min-h-[82vh] flex flex-col justify-center">
           <div
-            className={`mb-24 md:mb-28 transition-all duration-500 ${
+            className={`mb-12 md:mb-14 transition-all duration-500 ${
               servicesVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
             }`}
           >
@@ -637,7 +655,7 @@ export default function Home() {
         <div
           className="relative overflow-hidden flex flex-col justify-end"
           style={{
-            top: "86px",
+            top: isMobile ? "56px" : "86px",
             width: cW,
             height: cH,
             borderRadius: cR,
@@ -653,7 +671,7 @@ export default function Home() {
             className="absolute inset-0 z-[1] w-full h-full object-cover pointer-events-none"
           />
           <img
-            src={vw < 768 ? "/end-mobile.png?v=20260424-mobilefix" : "/end.png?v=20260424-002"}
+            src={vw < 768 ? "/end-mobile.png?v=20260424-mobilefix-2" : "/end.png?v=20260424-002"}
             alt=""
             className="absolute inset-0 z-[2] w-full h-full object-cover pointer-events-none"
             style={{ opacity: endSceneOpacity }}
@@ -669,12 +687,12 @@ export default function Home() {
             style={{
               opacity: headlineReveal,
               transform: headlineReveal >= 1
-                ? "translate(0px, 72px)"
-                : `translate(${(1 - headlineReveal) * -36}px, 72px)`,
+                ? `translate(0px, ${isMobile ? 8 : 72}px)`
+                : `translate(${(1 - headlineReveal) * -36}px, ${isMobile ? 8 : 72}px)`,
             }}
           >
             <h2
-              className="pl-[72px] md:pl-[80px] text-[#0f172a] font-medium leading-[0.92] tracking-tight"
+              className={`${isMobile ? "pl-6" : "pl-[72px] md:pl-[80px]"} text-[#0f172a] font-medium leading-[0.92] tracking-tight`}
               style={{ fontSize: contactHeadlineSize, textShadow: "4px 4px 0 #ffffff" }}
             >
               Let&apos;s build<br />together
