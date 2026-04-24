@@ -49,8 +49,25 @@ export default function FeaturedShowcase({ projects }: Props) {
   const trackRef   = useRef<HTMLDivElement>(null)
   const counterRef = useRef<HTMLDivElement>(null)
   const hasEnteredRef = useRef(false)
+  const activeIndexRef = useRef(-1)
+  const videoRefs = useRef<(HTMLVideoElement | null)[]>([])
 
   useEffect(() => {
+    const restartVideoAt = (index: number) => {
+      const video = videoRefs.current[index]
+      if (!video) return
+      try {
+        video.currentTime = 0
+      } catch {
+        // Some browsers block seeking until metadata is available.
+      }
+      video
+        .play()
+        .catch(() => {
+          // Ignore autoplay promise rejections in restrictive browsers.
+        })
+    }
+
     const update = () => {
       const section = sectionRef.current
       const stickyPanel = stickyPanelRef.current
@@ -68,6 +85,7 @@ export default function FeaturedShowcase({ projects }: Props) {
 
       const sy = window.scrollY
       const progress = Math.max(0, Math.min(1, (sy - sectionTop) / maxScroll))
+      const inSection = sy + winH > sectionTop && sy < sectionTop + sectionH
       const enterTriggerY = sectionTop - winH * 0.18
       if (!hasEnteredRef.current && sy >= enterTriggerY) {
         hasEnteredRef.current = true
@@ -84,6 +102,11 @@ export default function FeaturedShowcase({ projects }: Props) {
       const tx = Math.min(rawTx, maxTx)
       track.style.transform = `translate3d(-${tx}px, 0, 0)`
       track.style.transition = "transform 360ms cubic-bezier(0.22, 1, 0.36, 1)"
+
+      if (inSection && activeIndexRef.current !== active) {
+        activeIndexRef.current = active
+        restartVideoAt(active)
+      }
 
       // Update counter imperatively
       if (counterRef.current) {
@@ -135,7 +158,7 @@ export default function FeaturedShowcase({ projects }: Props) {
             className="flex h-full gap-12"
             style={{ willChange: "transform" }}
           >
-            {projects.map((p) => (
+            {projects.map((p, i) => (
               <Link
                 key={p.slug}
                 href={`/projects/${p.slug}?from=home`}
@@ -145,6 +168,9 @@ export default function FeaturedShowcase({ projects }: Props) {
                 <div className="relative flex-1 min-h-[52vh] md:min-h-[58vh] rounded-md overflow-hidden">
                   {showcaseVideoSrc(p.slug) ? (
                     <video
+                      ref={(el) => {
+                        videoRefs.current[i] = el
+                      }}
                       className={showcaseMediaPositionClass(p.slug)}
                       src={showcaseVideoSrc(p.slug) ?? undefined}
                       autoPlay

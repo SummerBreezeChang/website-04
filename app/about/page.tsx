@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useRef, useState, useEffect } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import Navigation from "@/components/navigation"
@@ -41,11 +41,10 @@ function LinkedInIcon({ className }: { className?: string }) {
 }
 
 const ROTATING_WORDS = [
-  "lifelong learner",
-  "systems thinker",
-  "product designer",
-  "creative coder",
-  "educator",
+  "a product designer",
+  "a lifelong learner",
+  "an AI explorer",
+  "a systems thinker",
 ]
 
 /* ─── Data ─────────────────────────────────────────────────────── */
@@ -257,9 +256,9 @@ const TESTIMONIALS: {
     role: "Founder / CEO, Bill Burns Design",
     quote:
       "I have worked with Summer for years. She consistently delivers creative designs, solves problems, pays attention to detail, and meets deadlines.",
-    image: null,
+    image: "/testimonials/bill-burns.png",
     cardClass:
-      "bg-sky-100 text-sky-950 border-sky-200/70 dark:bg-sky-950/45 dark:text-sky-50 dark:border-sky-800/50",
+      "bg-violet-50 text-violet-950 border-violet-200/70 dark:bg-violet-950/35 dark:text-violet-50 dark:border-violet-800/45",
   },
   {
     id: "jordan-vasquez",
@@ -267,9 +266,9 @@ const TESTIMONIALS: {
     role: "CRO, GrubConcierge",
     quote:
       "Summer is an exceptional designer and a true professional who genuinely cares about her clients.",
-    image: null,
+    image: "/testimonials/jordan-vasquez.png",
     cardClass:
-      "bg-rose-50 text-rose-950 border-rose-200/70 dark:bg-rose-950/35 dark:text-rose-50 dark:border-rose-800/45",
+      "bg-violet-50 text-violet-950 border-violet-200/70 dark:bg-violet-950/35 dark:text-violet-50 dark:border-violet-800/45",
   },
   {
     id: "joanne-kuan",
@@ -277,9 +276,9 @@ const TESTIMONIALS: {
     role: "Founder / CEO, Mr. Green Bubble",
     quote:
       "Summer was reliable, dedicated, communicative, and very responsible for the work she delivers.",
-    image: null,
+    image: "/testimonials/joanne-kuan.png",
     cardClass:
-      "bg-amber-50 text-amber-950 border-amber-200/70 dark:bg-amber-950/35 dark:text-amber-50 dark:border-amber-800/45",
+      "bg-violet-50 text-violet-950 border-violet-200/70 dark:bg-violet-950/35 dark:text-violet-50 dark:border-violet-800/45",
   },
   {
     id: "dennis-storz",
@@ -287,7 +286,7 @@ const TESTIMONIALS: {
     role: "Design leadership",
     quote:
       "Summer showed hard work, diligence, eagerness to learn, creativity, energy, strong collaboration skills, and overall pleasantness as a team member.",
-    image: null,
+    image: "/testimonials/dennis-storz.png",
     cardClass:
       "bg-violet-50 text-violet-950 border-violet-200/70 dark:bg-violet-950/35 dark:text-violet-50 dark:border-violet-800/45",
   },
@@ -297,9 +296,9 @@ const TESTIMONIALS: {
     role: "CEO / Founder, OmieLife",
     quote:
       "Summer was creative, a fast learner, and incredibly resourceful — we could always count on her to make things happen no matter what!",
-    image: null,
+    image: "/testimonials/nancy-yen.png",
     cardClass:
-      "bg-emerald-50 text-emerald-950 border-emerald-200/70 dark:bg-emerald-950/35 dark:text-emerald-50 dark:border-emerald-800/45",
+      "bg-violet-50 text-violet-950 border-violet-200/70 dark:bg-violet-950/35 dark:text-violet-50 dark:border-violet-800/45",
   },
   {
     id: "vincent-pascual",
@@ -307,9 +306,9 @@ const TESTIMONIALS: {
     role: "Senior Designer, Woven by Toyota",
     quote:
       "Summer's positive attitude, hard work, and willingness to learn made her a pleasure to work with.",
-    image: null,
+    image: "/testimonials/vincent-pascual.png",
     cardClass:
-      "bg-cyan-50 text-cyan-950 border-cyan-200/70 dark:bg-cyan-950/35 dark:text-cyan-50 dark:border-cyan-800/45",
+      "bg-violet-50 text-violet-950 border-violet-200/70 dark:bg-violet-950/35 dark:text-violet-50 dark:border-violet-800/45",
   },
   {
     id: "denise-pliskin",
@@ -317,9 +316,9 @@ const TESTIMONIALS: {
     role: "Partner, Speck Design",
     quote:
       "Summer was creative, hardworking, and a great team player. She played a crucial role on high-profile clients, including a large Google project.",
-    image: null,
+    image: "/testimonials/denise-pliskin.png",
     cardClass:
-      "bg-fuchsia-50 text-fuchsia-950 border-fuchsia-200/70 dark:bg-fuchsia-950/35 dark:text-fuchsia-50 dark:border-fuchsia-800/45",
+      "bg-violet-50 text-violet-950 border-violet-200/70 dark:bg-violet-950/35 dark:text-violet-50 dark:border-violet-800/45",
   },
   {
     id: "jen-torche",
@@ -327,9 +326,9 @@ const TESTIMONIALS: {
     role: "Digital Design Lead, Ford Motor Company",
     quote:
       "Summer was a real pleasure to work with. Smart and fun, she always applied strategic design thinking and planning into the projects she was a part of.",
-    image: null,
+    image: "/testimonials/jen-torche.png",
     cardClass:
-      "bg-orange-50 text-orange-950 border-orange-200/70 dark:bg-orange-950/35 dark:text-orange-50 dark:border-orange-800/45",
+      "bg-violet-50 text-violet-950 border-violet-200/70 dark:bg-violet-950/35 dark:text-violet-50 dark:border-violet-800/45",
   },
 ]
 
@@ -338,27 +337,90 @@ const TESTIMONIALS: {
 export default function AboutPage() {
   const [activeSkillTab, setActiveSkillTab] = useState<SkillView>("Tools")
   const [wordIndex, setWordIndex] = useState(0)
-  const [visible, setVisible] = useState(true)
+  const [typedText, setTypedText] = useState("")
+  const [isDeleting, setIsDeleting] = useState(false)
+  const sectionRefs = useRef<Record<string, HTMLElement | null>>({})
+  const [sectionInView, setSectionInView] = useState<Record<string, boolean>>({})
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setVisible(false)
-      setTimeout(() => {
-        setWordIndex((i) => (i + 1) % ROTATING_WORDS.length)
-        setVisible(true)
-      }, 400)
-    }, 2800)
-    return () => clearInterval(interval)
+    const currentWord = ROTATING_WORDS[wordIndex]
+
+    // Pause briefly when a word is fully typed (and before switching words).
+    if (!isDeleting && typedText === currentWord) {
+      const hold = setTimeout(() => setIsDeleting(true), 900)
+      return () => clearTimeout(hold)
+    }
+
+    // When deletion finishes, move to the next word.
+    if (isDeleting && typedText === "") {
+      setIsDeleting(false)
+      setWordIndex((i) => (i + 1) % ROTATING_WORDS.length)
+      return
+    }
+
+    const speed = isDeleting ? 38 : 65
+    const timer = setTimeout(() => {
+      const nextLength = typedText.length + (isDeleting ? -1 : 1)
+      setTypedText(currentWord.slice(0, Math.max(0, nextLength)))
+    }, speed)
+
+    return () => clearTimeout(timer)
+  }, [typedText, isDeleting, wordIndex])
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        setSectionInView((prev) => {
+          const next = { ...prev }
+          for (const entry of entries) {
+            const key = entry.target.getAttribute("data-animate-key")
+            if (!key) continue
+            next[key] = entry.isIntersecting
+          }
+          return next
+        })
+      },
+      {
+        threshold: 0.22,
+        rootMargin: "0px 0px -8% 0px",
+      }
+    )
+
+    Object.values(sectionRefs.current).forEach((node) => {
+      if (node) observer.observe(node)
+    })
+
+    return () => observer.disconnect()
   }, [])
 
   const visibleSkillGroups = activeSkillTab === "Tools" ? TOOL_GROUPS : SKILL_GROUPS
+
+  function registerAnimatedSection(key: string, node: HTMLElement | null) {
+    sectionRefs.current[key] = node
+  }
+
+  function sectionMotionStyle(key: string): React.CSSProperties {
+    const inView = sectionInView[key]
+    return {
+      transform: inView ? "translateY(0px)" : "translateY(90px)",
+      opacity: inView ? 1 : 0.02,
+      transition:
+        "transform 820ms cubic-bezier(0.22, 1, 0.36, 1), opacity 520ms ease",
+      willChange: "transform, opacity",
+    }
+  }
 
   return (
     <main className="min-h-screen bg-background">
       <Navigation />
 
       {/* ── Hero ────────────────────────────────────────────────── */}
-      <section className="px-4 pt-[188px] pb-0 md:pt-[220px] text-center">
+      <section
+        ref={(node) => registerAnimatedSection("hero", node)}
+        data-animate-key="hero"
+        style={sectionMotionStyle("hero")}
+        className="px-4 pt-[188px] pb-0 md:pt-[220px] text-center"
+      >
         <div className="max-w-6xl mx-auto">
 
           {/* Profile photo */}
@@ -375,25 +437,21 @@ export default function AboutPage() {
 
           {/* Animated headline */}
           <h1 className="text-3xl md:text-4xl font-bold leading-tight mb-10 font-mono tracking-tight">
-            I&apos;m Summer and I am a{" "}
-            <span
-              className="text-primary inline-block"
-              style={{
-                opacity: visible ? 1 : 0,
-                transform: visible ? "translateY(0px)" : "translateY(6px)",
-                transition: "opacity 0.35s ease, transform 0.35s ease",
-              }}
-            >
-              {ROTATING_WORDS[wordIndex]}
+            I&apos;m Summer,{" "}
+            <span className="text-primary inline-block min-w-[18ch] text-left align-baseline">
+              {typedText}
+              <span className="inline-block ml-0.5 animate-pulse">|</span>
             </span>
           </h1>
 
           {/* Bio + links — wider, left-aligned like reference */}
           <div className="max-w-4xl mx-auto text-left pb-14">
             <p className="text-base md:text-lg text-muted-foreground leading-relaxed mb-5">
-              I am a designer with a love of code, systems-thinking, and emerging
-              technology. I have a previous career as an educator, which has led
-              to a deep curiosity and love of mentoring other designers.
+              I design products, build systems, and ship things — often with AI.
+              I work across the full product lifecycle, from research and strategy
+              to design and development. I love making things work, solving
+              problems, and exploring what&apos;s next. I&apos;m currently open to
+              new challenges.
             </p>
 
             <p className="text-sm text-muted-foreground">
@@ -419,9 +477,14 @@ export default function AboutPage() {
       </section>
 
       {/* ── Resume Card ─────────────────────────────────────────── */}
-      <section className="px-4 pb-16">
+      <section
+        ref={(node) => registerAnimatedSection("resume", node)}
+        data-animate-key="resume"
+        style={sectionMotionStyle("resume")}
+        className="px-4 pb-16"
+      >
         <div className="max-w-6xl mx-auto">
-          <div className="rounded-2xl border border-border bg-card shadow-sm p-6 md:p-8 text-center">
+          <div className="w-full max-w-[916px] mx-auto rounded-2xl border border-border bg-card shadow-sm p-6 md:p-8 text-center">
             <h2 className="text-xl font-bold mb-1">Download My Resume</h2>
             <p className="text-sm text-muted-foreground mb-5">
               Get my latest resume in PDF format
@@ -440,7 +503,12 @@ export default function AboutPage() {
       </section>
 
       {/* ── Values ──────────────────────────────────────────────── */}
-      <section className="px-4 pb-16">
+      <section
+        ref={(node) => registerAnimatedSection("values", node)}
+        data-animate-key="values"
+        style={sectionMotionStyle("values")}
+        className="px-4 pb-16"
+      >
         <div className="max-w-6xl mx-auto">
           <SectionLabel icon={<Heart className="w-3.5 h-3.5" />} text="VALUES" />
           <h2 className="text-2xl md:text-3xl font-extrabold mb-8">What I Value</h2>
@@ -463,7 +531,12 @@ export default function AboutPage() {
       </section>
 
       {/* ── Skills ──────────────────────────────────────────────── */}
-      <section className="px-4 pb-16">
+      <section
+        ref={(node) => registerAnimatedSection("skills", node)}
+        data-animate-key="skills"
+        style={sectionMotionStyle("skills")}
+        className="px-4 pb-16"
+      >
         <div className="max-w-6xl mx-auto">
           <SectionLabel icon={<Zap className="w-3.5 h-3.5" />} text="SKILLS" />
           <h2 className="text-2xl md:text-3xl font-extrabold mb-6">My Skillset and Tools</h2>
@@ -518,7 +591,12 @@ export default function AboutPage() {
       </section>
 
       {/* ── Education ───────────────────────────────────────────── */}
-      <section className="px-4 pb-16">
+      <section
+        ref={(node) => registerAnimatedSection("education", node)}
+        data-animate-key="education"
+        style={sectionMotionStyle("education")}
+        className="px-4 pb-16"
+      >
         <div className="max-w-6xl mx-auto">
           <SectionLabel icon={<GraduationCap className="w-3.5 h-3.5" />} text="EDUCATION" />
           <h2 className="text-2xl md:text-3xl font-extrabold mb-2">Degrees and Certificates</h2>
@@ -526,11 +604,11 @@ export default function AboutPage() {
             Grouped by credential type with sub-tags for each item.
           </p>
 
-          <div className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {EDUCATION_GROUPS.map((group) => (
               <div
                 key={group.category}
-                className="rounded-2xl border border-border bg-card shadow-sm p-5"
+                className="rounded-2xl border border-border bg-card shadow-sm p-5 h-full"
               >
                 <h3 className="text-base font-bold mb-4">{group.category}</h3>
                 <div className="space-y-3">
@@ -569,33 +647,14 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* ── What I'm Thinking About ─────────────────────────────── */}
-      <section className="px-4 pb-16">
-        <div className="max-w-6xl mx-auto">
-          <SectionLabel icon={<Lightbulb className="w-3.5 h-3.5" />} text="INSPIRATION" />
-          <h2 className="text-2xl md:text-3xl font-extrabold mb-2">
-            What I&apos;m Thinking About
-          </h2>
-          <p className="text-sm text-muted-foreground mb-8 max-w-2xl">
-            Topics I&apos;m exploring lately — from AI tooling to systems, craft, and how design shows up in product.
-          </p>
-
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-            {INTERESTS.map((i) => (
-              <div
-                key={i.label}
-                className={`${i.bg} ${i.text} rounded-2xl p-4 flex items-center justify-center text-center text-xs font-semibold h-20 shadow-sm border border-white/60 hover:scale-[1.03] transition-transform duration-300`}
-              >
-                {i.label}
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* ── Recommendations (looping marquee) ───────────────────── */}
-      <section className="pb-16 overflow-hidden">
-        <div className="px-4 max-w-6xl mx-auto mb-8">
+      <section
+        ref={(node) => registerAnimatedSection("testimonials", node)}
+        data-animate-key="testimonials"
+        style={sectionMotionStyle("testimonials")}
+        className="pb-16 overflow-hidden"
+      >
+        <div className="px-4 max-w-6xl mx-auto mb-[60px]">
           <SectionLabel icon={<Quote className="w-3.5 h-3.5" />} text="KIND WORDS" />
           <h2 className="text-2xl md:text-3xl font-extrabold mb-2">
             They&apos;ve said some lovely things
@@ -623,7 +682,12 @@ export default function AboutPage() {
       </section>
 
       {/* ── Say Hi ──────────────────────────────────────────────── */}
-      <section className="flex w-full justify-center overflow-x-clip px-4 py-[80px]">
+      <section
+        ref={(node) => registerAnimatedSection("say-hi", node)}
+        data-animate-key="say-hi"
+        style={sectionMotionStyle("say-hi")}
+        className="flex w-full justify-center overflow-x-clip px-4 py-[80px]"
+      >
         <div className="w-full min-w-0 max-w-[680px] text-left">
           <div className="mb-6 flex flex-row flex-wrap items-center justify-between gap-x-4 gap-y-4">
             <div className="flex min-w-0 items-center gap-4">
@@ -640,12 +704,12 @@ export default function AboutPage() {
                 Say Hi
               </h2>
             </div>
-            <Link
-              href="/contact"
+            <a
+              href="mailto:contact@summerchang.co"
               className="interactive-glow-btn -translate-x-[56px] inline-flex min-w-[140px] shrink-0 items-center justify-center px-8 py-3 rounded-full bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary/90 transition-colors"
             >
               Get in touch
-            </Link>
+            </a>
           </div>
 
           <p className="text-sm text-muted-foreground mb-6">
@@ -717,7 +781,7 @@ function TestimonialAvatar({
 /* ─── Section label pill ─────────────────────────────────────────── */
 function SectionLabel({ icon, text }: { icon: React.ReactNode; text: string }) {
   return (
-    <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 text-primary text-[11px] font-bold tracking-widest mb-3">
+    <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#e8f0f1] text-black text-[11px] font-bold tracking-widest mb-3">
       {icon}
       {text}
     </div>

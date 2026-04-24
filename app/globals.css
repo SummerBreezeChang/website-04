@@ -61,7 +61,7 @@
 }
 
 @theme inline {
-  --font-sans: "Poppins", "Poppins Fallback", system-ui, sans-serif;
+  --font-sans: "Public Sans", "Public Sans Fallback", system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-mono: "JetBrains Mono", "Geist Mono Fallback", monospace;
   --font-serif: "Crimson Text", "serif";
   --font-display: "SF Mono", "Fira Code", "Fira Mono", "Roboto Mono", monospace;

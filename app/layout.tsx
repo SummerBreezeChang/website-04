@@ -1,13 +1,13 @@
 import type React from "react"
 import type { Metadata } from "next"
-import { Poppins, Crimson_Text } from "next/font/google"
+import { Public_Sans, Crimson_Text } from "next/font/google"
 import Footer from "@/components/footer"
 import "./globals.css"
 
-const poppins = Poppins({
+const publicSans = Public_Sans({
   subsets: ["latin"],
   variable: "--font-sans",
-  weight: ["400", "500", "600", "700", "800"],
+  weight: ["400", "500", "600", "700"],
 })
 
 const crimsonText = Crimson_Text({
@@ -33,7 +33,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" className={`${poppins.variable} ${crimsonText.variable}`}>
+    <html lang="en" className={`${publicSans.variable} ${crimsonText.variable}`}>
       <body className="font-sans antialiased">
         {children}
         <Footer />

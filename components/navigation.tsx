@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react"
 import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion"
 import Link from "next/link"
-import { Grid3X3, Moon, Sun } from "lucide-react"
+import { Moon, Sun } from "lucide-react"
 import { projects } from "@/lib/projects-v2"
 
 const caseStudySlugs = ["playdates", "notion-client-intake", "petcard", "reelwish", "mina", "bookee"]
@@ -225,10 +225,10 @@ export default function Navigation() {
             </button>
             <Link
               href="/contact"
-              className="hidden md:inline-flex w-10 h-10 items-center justify-center rounded-xl bg-primary/15 text-primary hover:bg-primary/25 transition-colors"
+              className="hidden md:inline-flex h-10 items-center justify-center gap-2 rounded-xl bg-primary/15 px-4 text-primary hover:bg-primary/25 transition-colors"
               aria-label="Contact call to action"
             >
-              <Grid3X3 className="w-4 h-4" />
+              <span className="text-sm font-semibold">Contact me</span>
             </Link>
           </div>
         </motion.nav>

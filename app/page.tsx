@@ -17,6 +17,8 @@ import { getBentoImage } from "@/lib/bento-image"
 import Navigation from "@/components/navigation"
 import FeaturedShowcase from "@/components/featured-showcase"
 
+const HERO_TYPED_WORDS = ["thoughtful", "functional", "ready to ship"]
+
 export default function Home() {
   const [scrollY, setScrollY]           = useState(0)
   const [vh, setVh]                     = useState(800)
@@ -31,6 +33,9 @@ export default function Home() {
   const [gridPositions, setGridPositions] = useState<
     { x: number; y: number; width: number; height: number }[]
   >([])
+  const [heroWordIndex, setHeroWordIndex] = useState(0)
+  const [heroTypedText, setHeroTypedText] = useState("")
+  const [heroDeleting, setHeroDeleting] = useState(false)
 
   const cardRefs            = useRef<(HTMLDivElement | null)[]>([])
   const contactRef          = useRef<HTMLDivElement>(null)
@@ -200,6 +205,29 @@ export default function Home() {
     return () => observer.disconnect()
   }, [])
 
+  useEffect(() => {
+    const currentWord = HERO_TYPED_WORDS[heroWordIndex]
+
+    if (!heroDeleting && heroTypedText === currentWord) {
+      const hold = setTimeout(() => setHeroDeleting(true), 900)
+      return () => clearTimeout(hold)
+    }
+
+    if (heroDeleting && heroTypedText === "") {
+      setHeroDeleting(false)
+      setHeroWordIndex((i) => (i + 1) % HERO_TYPED_WORDS.length)
+      return
+    }
+
+    const speed = heroDeleting ? 34 : 62
+    const timer = setTimeout(() => {
+      const nextLength = heroTypedText.length + (heroDeleting ? -1 : 1)
+      setHeroTypedText(currentWord.slice(0, Math.max(0, nextLength)))
+    }, speed)
+
+    return () => clearTimeout(timer)
+  }, [heroTypedText, heroDeleting, heroWordIndex])
+
   // ─── DERIVED SCROLL PROGRESS ─────────────────────────────────────────────
   // sp  = 0→1 as we scroll through hero (controls bento fade + floating cards)
   // fp  = 0→1 faster (hero text fade-out)
@@ -322,7 +350,7 @@ export default function Home() {
         style={{ minHeight: Math.max(HERO_H, vh) }}
       >
         <div
-          className="text-center max-w-xl mx-auto relative z-10"
+          className="text-center max-w-2xl mx-auto relative z-10"
           style={{
             opacity:   Math.max(0, 1 - fp * 1.5),
             transform: `translateY(${fp * 40}px)`,
@@ -334,11 +362,12 @@ export default function Home() {
               Available for work
             </span>
           </div>
-          <h1 className="text-3xl md:text-5xl font-extrabold leading-tight mb-5">
-            I design{" "}
-            <span className="font-serif italic text-primary font-normal">AI-powered</span>{" "}
-            products that help startups{" "}
-            <span className="text-primary">think clearly and move fast.</span>
+          <h1 className="text-3xl md:text-5xl font-bold leading-tight mb-5 font-mono tracking-tight">
+            <span className="block -translate-y-[8px]">I design products</span>
+            <span className="block text-primary mb-[44px]">
+              that are {heroTypedText}
+              <span className="inline-block ml-0.5 animate-pulse">|</span>
+            </span>
           </h1>
           <div className="flex gap-3 justify-center flex-wrap">
             <Link
@@ -598,7 +627,7 @@ export default function Home() {
             className="absolute inset-0 z-[1] w-full h-full object-cover pointer-events-none"
           />
           <img
-            src="/end.png"
+            src="/end.png?v=20260423-2245"
             alt=""
             className="absolute inset-0 z-[2] w-full h-full object-cover pointer-events-none"
             style={{ opacity: endSceneOpacity }}
@@ -619,7 +648,7 @@ export default function Home() {
             }}
           >
             <h2
-              className="pl-[72px] md:pl-[80px] text-[#0f172a] font-black leading-[0.92] tracking-tight"
+              className="pl-[72px] md:pl-[80px] text-[#0f172a] font-medium leading-[0.92] tracking-tight"
               style={{ fontSize: contactHeadlineSize, textShadow: "4px 4px 0 #ffffff" }}
             >
               Let&apos;s build<br />together
@@ -635,14 +664,14 @@ export default function Home() {
             }}
           >
             <a
-              href="mailto:contact@summerchang.co"
+              href="/contact"
               className="flex-1 py-5 px-6 text-sm font-semibold text-white flex items-center justify-between rounded-l-xl"
               style={{ background: "rgba(255,255,255,0.08)" }}
             >
               Talk with Summer <span>→</span>
             </a>
             <a
-              href="mailto:contact@summerchang.co"
+              href="/contact"
               className="flex-1 py-5 px-6 text-sm font-semibold text-white flex items-center justify-between rounded-r-xl bg-primary"
             >
               Reach out <span>→</span>
