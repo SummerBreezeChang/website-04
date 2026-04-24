@@ -100,6 +100,7 @@ export default function Home() {
   // - /projects/<slug>/float-square.jpg
   // Falls back to bento/thumb and finally color + title.
   const getFloatImage = (slug: string, w: number, h: number) => {
+    if (vw < 768) return `/projects/${slug}/float-mobile.png`
     const ratio = w / h
     const base = `/projects/${slug}`
     if (slug === "bookee") return `${base}/float-square.jpg`
@@ -647,12 +648,12 @@ export default function Home() {
         >
           {/* Scene transition: start portrait -> full end scene */}
           <img
-            src="/start.png"
+            src={vw < 768 ? "/start-mobile.png?v=20260424-mobilefix" : "/start.png"}
             alt=""
             className="absolute inset-0 z-[1] w-full h-full object-cover pointer-events-none"
           />
           <img
-            src="/end.png?v=20260424-002"
+            src={vw < 768 ? "/end-mobile.png?v=20260424-mobilefix" : "/end.png?v=20260424-002"}
             alt=""
             className="absolute inset-0 z-[2] w-full h-full object-cover pointer-events-none"
             style={{ opacity: endSceneOpacity }}
