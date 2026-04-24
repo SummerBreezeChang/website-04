@@ -5,6 +5,7 @@ import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion"
 import Link from "next/link"
 import { Moon, Sun } from "lucide-react"
 import { projects } from "@/lib/projects-v2"
+import { PROJECT_DETAILS_ENABLED } from "@/lib/site-flags"
 
 const caseStudySlugs = ["playdates", "notion-client-intake", "petcard", "reelwish", "mina", "bookee"]
 
@@ -114,7 +115,10 @@ export default function Navigation() {
           <div className="hidden md:flex items-center gap-8 justify-self-start">
             <div id="case-studies-menu-anchor" className="relative">
               <button
-                onClick={() => setCaseOpen((v) => !v)}
+                onClick={() => {
+                  if (!PROJECT_DETAILS_ENABLED) return
+                  setCaseOpen((v) => !v)
+                }}
                 className="inline-flex items-center gap-1.5 text-[14px] font-medium transition-colors"
                 style={{ color: navLinkColor }}
               >
@@ -131,33 +135,52 @@ export default function Navigation() {
                     className="absolute left-0 top-[calc(100%+12px)] w-[760px] rounded-2xl border border-border bg-card p-5 shadow-[0_24px_70px_-30px_rgba(15,23,42,0.3)] z-[260]"
                   >
                     <div className="grid grid-cols-2 gap-x-5 gap-y-1">
-                      {caseStudies.map((item) => (
-                        <Link
-                          key={item!.slug}
-                          href={`/projects/${item!.slug}?from=home`}
-                          onClick={() => setCaseOpen(false)}
-                          className="flex items-stretch gap-4 rounded-xl px-2 py-2.5 hover:bg-black/[0.03] transition-colors"
-                        >
-                          <div className="w-16 h-[58px] rounded-[12px] overflow-hidden shrink-0 bg-muted">
-                            <img src={item!.thumbnail} alt={item!.title} className="w-full h-full object-cover" />
+                      {caseStudies.map((item) =>
+                        PROJECT_DETAILS_ENABLED ? (
+                          <Link
+                            key={item!.slug}
+                            href={`/projects/${item!.slug}?from=home`}
+                            onClick={() => setCaseOpen(false)}
+                            className="flex items-stretch gap-4 rounded-xl px-2 py-2.5 hover:bg-black/[0.03] transition-colors"
+                          >
+                            <div className="w-16 h-[58px] rounded-[12px] overflow-hidden shrink-0 bg-muted">
+                              <img src={item!.thumbnail} alt={item!.title} className="w-full h-full object-cover" />
+                            </div>
+                            <div className="min-h-[58px] flex flex-col justify-center">
+                              <p className="text-[16px] font-semibold text-card-foreground leading-tight">{item!.title}</p>
+                              <p className="text-[13px] text-muted-foreground leading-tight mt-1">{item!.subtitle}</p>
+                            </div>
+                          </Link>
+                        ) : (
+                          <div
+                            key={item!.slug}
+                            className="flex items-stretch gap-4 rounded-xl px-2 py-2.5 opacity-75 cursor-default"
+                          >
+                            <div className="w-16 h-[58px] rounded-[12px] overflow-hidden shrink-0 bg-muted">
+                              <img src={item!.thumbnail} alt={item!.title} className="w-full h-full object-cover" />
+                            </div>
+                            <div className="min-h-[58px] flex flex-col justify-center">
+                              <p className="text-[16px] font-semibold text-card-foreground leading-tight">{item!.title}</p>
+                              <p className="text-[13px] text-muted-foreground leading-tight mt-1">{item!.subtitle}</p>
+                            </div>
                           </div>
-                          <div className="min-h-[58px] flex flex-col justify-center">
-                            <p className="text-[16px] font-semibold text-card-foreground leading-tight">{item!.title}</p>
-                            <p className="text-[13px] text-muted-foreground leading-tight mt-1">{item!.subtitle}</p>
-                          </div>
-                        </Link>
-                      ))}
+                        )
+                      )}
                     </div>
 
-                    <div className="my-4 border-t border-black/10" />
-                    <Link
-                      href="/more"
-                      onClick={() => setCaseOpen(false)}
-                      className="block rounded-xl px-2 py-2 hover:bg-black/[0.03] transition-colors"
-                    >
-                      <p className="text-[16px] font-semibold text-card-foreground">Browse</p>
-                      <p className="text-[13px] text-muted-foreground mt-1">See all case studies</p>
-                    </Link>
+                    {PROJECT_DETAILS_ENABLED && (
+                      <>
+                        <div className="my-4 border-t border-black/10" />
+                        <Link
+                          href="/more"
+                          onClick={() => setCaseOpen(false)}
+                          className="block rounded-xl px-2 py-2 hover:bg-black/[0.03] transition-colors"
+                        >
+                          <p className="text-[16px] font-semibold text-card-foreground">Browse</p>
+                          <p className="text-[13px] text-muted-foreground mt-1">See all case studies</p>
+                        </Link>
+                      </>
+                    )}
                   </motion.div>
                 )}
               </AnimatePresence>

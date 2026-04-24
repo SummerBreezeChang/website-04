@@ -12,6 +12,7 @@ import { useEffect, useRef } from "react"
 import Link from "next/link"
 import type { ProjectMeta } from "@/lib/types"
 import { getBentoImage } from "@/lib/bento-image"
+import { PROJECT_DETAILS_ENABLED } from "@/lib/site-flags"
 
 interface Props {
   projects: ProjectMeta[]
@@ -158,12 +159,9 @@ export default function FeaturedShowcase({ projects }: Props) {
             className="flex h-full gap-12"
             style={{ willChange: "transform" }}
           >
-            {projects.map((p, i) => (
-              <Link
-                key={p.slug}
-                href={`/projects/${p.slug}?from=home`}
-                className="h-full shrink-0 basis-full relative flex flex-col text-left group"
-              >
+            {projects.map((p, i) => {
+              const cardBody = (
+                <>
                 {/* Image-first: no text overlay — matches Section 2 bento readability */}
                 <div className="relative flex-1 min-h-[52vh] md:min-h-[58vh] rounded-md overflow-hidden">
                   {showcaseVideoSrc(p.slug) ? (
@@ -220,8 +218,24 @@ export default function FeaturedShowcase({ projects }: Props) {
                     </span>
                   </div>
                 </div>
-              </Link>
-            ))}
+                </>
+              )
+
+              const commonClassName = "h-full shrink-0 basis-full relative flex flex-col text-left group"
+              if (!PROJECT_DETAILS_ENABLED) {
+                return (
+                  <div key={p.slug} className={commonClassName}>
+                    {cardBody}
+                  </div>
+                )
+              }
+
+              return (
+                <Link key={p.slug} href={`/projects/${p.slug}?from=home`} className={commonClassName}>
+                  {cardBody}
+                </Link>
+              )
+            })}
           </div>
         </div>
       </div>

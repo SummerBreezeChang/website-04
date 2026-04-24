@@ -1,9 +1,10 @@
-import { notFound } from "next/navigation"
+import { notFound, redirect } from "next/navigation"
 import Link from "next/link"
 import { ArrowLeft, ArrowUpRight } from "lucide-react"
 import Navigation from "@/components/navigation"
 import { SectionRenderer } from "@/components/project-sections"
 import { projects } from "@/lib/projects-v2"
+import { PROJECT_DETAILS_ENABLED } from "@/lib/site-flags"
 
 function projectHeroVideoSrc(slug: string) {
   if (slug === "bookee") return "/projects/bookee/bookee-showcase.mp4?v=20260422-145155"
@@ -33,6 +34,10 @@ export default async function ProjectPage({
   params: Promise<{ slug: string }>
   searchParams: Promise<{ from?: string }>
 }) {
+  if (!PROJECT_DETAILS_ENABLED) {
+    redirect("/")
+  }
+
   const { slug } = await params
   const { from } = await searchParams
   const p = projects.find((x) => x.slug === slug)
