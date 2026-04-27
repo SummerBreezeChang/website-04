@@ -25,32 +25,32 @@ function bentoIconSrc(slug: string) {
 function showcaseVideoSrc(slug: string, isMobile: boolean) {
   if (slug === "bookee") {
     return isMobile
-      ? "/projects/bookee/bookee-showcase-mobile.mp4?v=20260427-mobileall"
+      ? "/projects/bookee/bookee-showcase-mobile.mp4?v=20260427-mobilefix2"
       : "/projects/bookee/bookee-showcase.mp4?v=20260424-assetfix"
   }
   if (slug === "playdates") {
     return isMobile
-      ? "/projects/playdates/playdates-showcase-mobile.mp4?v=20260427-mobileall"
+      ? "/projects/playdates/playdates-showcase-mobile.mp4?v=20260427-mobilefix2"
       : "/projects/playdates/playdates-showcase.mp4?v=20260424-assetfix"
   }
   if (slug === "petcard") {
     return isMobile
-      ? "/projects/petcard/petcard-showcase-mobile.mp4?v=20260427-mobileall"
+      ? "/projects/petcard/petcard-showcase-mobile.mp4?v=20260427-petcard-refresh1"
       : "/projects/petcard/petcard-showcase.mp4?v=20260424-assetfix"
   }
   if (slug === "notion-client-intake") {
     return isMobile
-      ? "/projects/notion-client-intake/notion-client-intake-showcase-mobile.mp4?v=20260427-mobileall"
+      ? "/projects/notion-client-intake/notion-client-intake-showcase-mobile.mp4?v=20260427-mobilefix2"
       : "/projects/notion-client-intake/notion-client-intake-showcase.mp4?v=20260424-assetfix"
   }
   if (slug === "reelwish") {
     return isMobile
-      ? "/projects/reelwish/showcase-mobile.mp4?v=20260427-mobileall"
+      ? "/projects/reelwish/showcase-mobile.mp4?v=20260427-mobilefix2"
       : "/projects/reelwish/showcase.mp4?v=20260424-assetfix"
   }
   if (slug === "mina") {
     return isMobile
-      ? "/projects/mina/mina-showcase-mobile.mp4?v=20260427-mobileall"
+      ? "/projects/mina/mina-showcase-mobile.mp4?v=20260427-mobilefix2"
       : "/projects/mina/mina-showcase.mp4?v=20260424-assetfix"
   }
   return null
@@ -66,7 +66,7 @@ export default function FeaturedShowcase({ projects }: Props) {
   // Vertical scroll needed to advance one project card (as a fraction of viewport height).
   // Lower = faster horizontal advance.
   const STEP_VH_DESKTOP = 0.34
-  const CARD_GAP_PX = 48
+  const CARD_GAP_PX_DESKTOP = 48
 
   const sectionRef = useRef<HTMLElement>(null)
   const stickyPanelRef = useRef<HTMLDivElement>(null)
@@ -128,7 +128,10 @@ export default function FeaturedShowcase({ projects }: Props) {
       const active = Math.min(N - 1, Math.max(0, Math.floor(rawIndex)))
 
       // Pixel-based translateX — clamp to actual max to avoid blank tail on last card.
-      const stepW = viewportW + CARD_GAP_PX
+      const firstCard = track.firstElementChild as HTMLElement | null
+      const trackStyles = window.getComputedStyle(track)
+      const trackGap = Number.parseFloat(trackStyles.columnGap || trackStyles.gap || "0") || 0
+      const stepW = (firstCard?.offsetWidth ?? viewportW) + trackGap
       const rawTx = active * stepW
       const maxTx = Math.max(0, track.scrollWidth - viewportW)
       const tx = Math.min(rawTx, maxTx)
@@ -163,7 +166,7 @@ export default function FeaturedShowcase({ projects }: Props) {
       ref={sectionRef}
       className="relative"
       // Total height = sticky viewport (100vh) + per-step scroll distance for remaining cards.
-      style={{ height: `calc(${100 + (N - 1) * stepVh * 100}vh - 60px)` }}
+      style={{ height: isMobile ? `calc(${100 + (N - 1) * stepVh * 100}vh)` : `calc(${100 + (N - 1) * stepVh * 100}vh - 60px)` }}
     >
       {/* Sticky viewport panel with padding — creates inset effect */}
       <div
@@ -189,7 +192,7 @@ export default function FeaturedShowcase({ projects }: Props) {
           {/* Horizontal flex track — 6 × 100vw cards, translateX moves it left */}
           <div
             ref={trackRef}
-            className="flex h-full gap-12"
+            className="flex h-full gap-0 md:gap-12"
             style={{ willChange: "transform" }}
           >
             {projects.map((p, i) => {
