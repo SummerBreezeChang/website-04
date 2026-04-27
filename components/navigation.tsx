@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react"
 import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion"
 import Link from "next/link"
+import { usePathname } from "next/navigation"
 import { Moon, Sun } from "lucide-react"
 import { projects } from "@/lib/projects-v2"
 import { PROJECT_DETAILS_ENABLED } from "@/lib/site-flags"
@@ -10,6 +11,7 @@ import { PROJECT_DETAILS_ENABLED } from "@/lib/site-flags"
 const caseStudySlugs = ["playdates", "notion-client-intake", "petcard", "reelwish", "mina", "bookee"]
 
 export default function Navigation() {
+  const pathname = usePathname()
   const [mobileOpen, setMobileOpen] = useState(false)
   const [scrolled, setScrolled]     = useState(false)
   const [caseOpen, setCaseOpen] = useState(false)
@@ -51,6 +53,19 @@ export default function Navigation() {
     setDarkMode(isDark)
   }, [])
 
+  useEffect(() => {
+    if (!mobileOpen) return
+    const previousOverflow = document.body.style.overflow
+    document.body.style.overflow = "hidden"
+    return () => {
+      document.body.style.overflow = previousOverflow
+    }
+  }, [mobileOpen])
+
+  useEffect(() => {
+    setMobileOpen(false)
+  }, [pathname])
+
   const toggleDarkMode = () => {
     const next = !darkMode
     setDarkMode(next)
@@ -74,7 +89,7 @@ export default function Navigation() {
         style={{ paddingTop: scrolled ? 12 : 20 }}
       >
         <motion.nav
-          className="relative grid grid-cols-[1fr_auto_1fr] items-center px-6 md:px-8 overflow-visible"
+          className="relative grid grid-cols-[auto_1fr_auto] md:grid-cols-[1fr_auto_1fr] items-center px-5 md:px-8 overflow-visible"
           style={{
             width:           scrolled ? "68%" : "100%",
             borderRadius:    scrolled ? 38 : 28,
@@ -219,36 +234,47 @@ export default function Navigation() {
             />
           </Link>
 
+          {/* Mobile center brand */}
+          <Link
+            href="/"
+            className="md:hidden justify-self-center text-[32px] font-semibold tracking-tight leading-none"
+            style={{ color: darkMode ? (scrolled ? "#111827" : "rgba(255,255,255,0.92)") : "#111827" }}
+          >
+            summerchang.co
+          </Link>
+
           {/* Mobile — hamburger */}
           <button
-            onClick={() => setMobileOpen(true)}
-            className="md:hidden p-1"
-            aria-label="Open menu"
+            onClick={() => setMobileOpen((v) => !v)}
+            className="md:hidden p-1 justify-self-end"
+            aria-label={mobileOpen ? "Close menu" : "Open menu"}
           >
             <svg
               className="w-5 h-5 transition-colors duration-300"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
-              style={{
-                color: darkMode ? (scrolled ? "#1a1a1a" : "rgba(255,255,255,0.92)") : scrolled ? "#1a1a1a" : "#fff",
-              }}
+              style={{ color: darkMode ? (scrolled ? "#1a1a1a" : "rgba(255,255,255,0.92)") : "#1a1a1a" }}
             >
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 6h16M4 12h16" />
+              {mobileOpen ? (
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M6 18L18 6M6 6l12 12" />
+              ) : (
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 6h16M4 12h16M4 18h16" />
+              )}
             </svg>
           </button>
 
-          <div className="flex items-center gap-3 justify-self-end">
+          <div className="hidden md:flex items-center gap-3 justify-self-end">
             <button
               onClick={toggleDarkMode}
-              className="hidden md:inline-flex w-10 h-10 items-center justify-center rounded-xl border border-black/10 bg-white/70 hover:bg-white dark:bg-white/10 dark:border-white/20 dark:hover:bg-white/20 transition-colors"
+              className="inline-flex w-10 h-10 items-center justify-center rounded-xl border border-black/10 bg-white/70 hover:bg-white dark:bg-white/10 dark:border-white/20 dark:hover:bg-white/20 transition-colors"
               aria-label="Toggle dark mode"
             >
               {darkMode ? <Moon className="w-4 h-4 text-white" /> : <Sun className="w-4 h-4 text-[#F59E0B]" />}
             </button>
             <Link
               href="/contact"
-              className="hidden md:inline-flex h-10 items-center justify-center gap-2 rounded-xl bg-primary/15 px-4 text-primary hover:bg-primary/25 transition-colors"
+              className="inline-flex h-10 items-center justify-center gap-2 rounded-xl bg-primary/15 px-4 text-primary hover:bg-primary/25 transition-colors"
               aria-label="Contact call to action"
             >
               <span className="text-sm font-semibold">Contact me</span>
@@ -257,7 +283,7 @@ export default function Navigation() {
         </motion.nav>
       </motion.div>
 
-      {/* ── Mobile drawer ── */}
+      {/* ── Mobile dropdown menu ── */}
       <AnimatePresence>
         {mobileOpen && (
           <>
@@ -265,47 +291,30 @@ export default function Navigation() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="fixed inset-0 z-[300] bg-black/30"
+              className="fixed inset-0 z-[300] bg-black/20 md:hidden"
               onClick={() => setMobileOpen(false)}
             />
             <motion.div
-              initial={{ x: "-100%" }}
-              animate={{ x: 0 }}
-              exit={{ x: "-100%" }}
-              transition={{ type: "tween", duration: 0.28 }}
-              className="fixed top-0 left-0 bottom-0 z-[400] w-72 bg-background p-8 flex flex-col"
+              initial={{ opacity: 0, y: -8, scale: 0.98 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -8, scale: 0.98 }}
+              transition={{ duration: 0.2 }}
+              className="fixed top-[88px] left-4 right-4 z-[400] rounded-2xl border border-border bg-card p-4 shadow-[0_24px_70px_-30px_rgba(15,23,42,0.3)] md:hidden"
             >
-              <button
-                onClick={() => setMobileOpen(false)}
-                className="mb-8 self-start"
-                aria-label="Close menu"
-              >
-                <svg className="w-5 h-5 text-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-
-              <div className="space-y-6 flex-1">
-                <Link href="/#projects" onClick={() => setMobileOpen(false)} className="block text-2xl font-light text-foreground hover:text-primary transition-colors">
+              <div className="space-y-1">
+                <Link href="/#projects" onClick={() => setMobileOpen(false)} className="block rounded-xl px-3 py-3 text-base font-medium text-foreground hover:bg-black/[0.03] transition-colors">
                   Case Studies
                 </Link>
-                <Link href="/about" onClick={() => setMobileOpen(false)} className="block text-2xl font-light text-foreground hover:text-primary transition-colors">
+                <Link href="/about" onClick={() => setMobileOpen(false)} className="block rounded-xl px-3 py-3 text-base font-medium text-foreground hover:bg-black/[0.03] transition-colors">
                   About
                 </Link>
-                <Link href="/blog" onClick={() => setMobileOpen(false)} className="block text-2xl font-light text-foreground hover:text-primary transition-colors">
+                <Link href="/blog" onClick={() => setMobileOpen(false)} className="block rounded-xl px-3 py-3 text-base font-medium text-foreground hover:bg-black/[0.03] transition-colors">
                   Blog
                 </Link>
-                <Link href="/contact" onClick={() => setMobileOpen(false)} className="block text-2xl font-light text-foreground hover:text-primary transition-colors">
-                  Contact
+                <Link href="/contact" onClick={() => setMobileOpen(false)} className="mt-2 inline-flex w-full items-center justify-center rounded-xl bg-primary text-primary-foreground px-4 py-3 text-sm font-semibold hover:bg-primary/90 transition-colors">
+                  Contact me
                 </Link>
               </div>
-
-              <button
-                onClick={toggleDarkMode}
-                className="mt-8 block w-full text-center px-5 py-3 rounded-full bg-primary text-white font-semibold text-sm"
-              >
-                Toggle {darkMode ? "Light" : "Dark"} Mode
-              </button>
             </motion.div>
           </>
         )}
