@@ -55,7 +55,7 @@ export default function Home() {
 
   /** Square app icon in the bento metadata row: `/projects/<slug>/bento-icon.png` (optional). */
   const getBentoIconSrc = (slug: string) => {
-    if (slug === "reelwish") return `/projects/reelwish/bentgo-icon.png?v=20260423-0949`
+    if (slug === "reelwish") return `/projects/reelwish/bento-icon.png?v=20260427`
     return `/projects/${slug}/bento-icon.png`
   }
 
@@ -100,10 +100,10 @@ export default function Home() {
   const floatingCardsMobile = [
     { slug: "bookee", gi: featuredIndexBySlug.bookee ?? 0, ix: 14, iy: 20, dx: -2, dy: 0, r: -7, w: 110, h: 148 },
     { slug: "petcard", gi: featuredIndexBySlug.petcard ?? 2, ix: 84, iy: 8, dx: 0, dy: 0, r: 6, w: 100, h: 158 },
-    { slug: "notion-client-intake", gi: featuredIndexBySlug["notion-client-intake"] ?? 3, ix: 90, iy: 62, dx: 0, dy: 0, r: 3, w: 112, h: 112 },
-    { slug: "reelwish", gi: featuredIndexBySlug.reelwish ?? 5, ix: 10, iy: 82, dx: 0, dy: 0, r: -3, w: 126, h: 94 },
-    { slug: "playdates", gi: featuredIndexBySlug.playdates ?? 1, ix: 24, iy: 94, dx: 0, dy: 0, r: -2, w: 130, h: 92 },
-    { slug: "mina", gi: featuredIndexBySlug.mina ?? 4, ix: 86, iy: 94, dx: 0, dy: 0, r: 3, w: 124, h: 90 },
+    { slug: "notion-client-intake", gi: featuredIndexBySlug["notion-client-intake"] ?? 3, ix: 90, iy: 62, dx: 0, dy: 24, r: 3, w: 112, h: 112 },
+    { slug: "reelwish", gi: featuredIndexBySlug.reelwish ?? 5, ix: 10, iy: 82, dx: 0, dy: -32, r: -3, w: 126, h: 94 },
+    { slug: "playdates", gi: featuredIndexBySlug.playdates ?? 1, ix: 24, iy: 94, dx: 0, dy: -16, r: -2, w: 130, h: 92 },
+    { slug: "mina", gi: featuredIndexBySlug.mina ?? 4, ix: 86, iy: 94, dx: 0, dy: -16, r: 3, w: 124, h: 90 },
   ]
   const isMobile = vw < 768
   const activeFloatingCards = isMobile ? floatingCardsMobile : floatingCards
@@ -351,7 +351,7 @@ export default function Home() {
               height: c.h + (g.height - c.h) * ep,
               backgroundColor: p?.color ?? "#888",
               backgroundImage: p
-                ? `url(${getFloatImage(p.slug, c.w, c.h)}), url(/projects/${p.slug}/bento.jpg), url(${p.thumbnail})`
+                ? `url(${getFloatImage(p.slug, c.w, c.h)}), url(${getBentoImage(p.slug)}), url(${p.thumbnail})`
                 : undefined,
               backgroundSize: "cover",
               backgroundPosition: "center",
@@ -453,10 +453,13 @@ export default function Home() {
                 />
 
                 <div
-                  className="relative min-h-0 flex-1 rounded-md overflow-hidden"
+                  className="relative min-h-0 flex-1 rounded-[4px] md:rounded-md overflow-hidden"
                   style={{
                     backgroundColor: p.color,
-                    backgroundImage: `url(${getBentoImage(p.slug)}), url(${p.thumbnail})`,
+                    backgroundImage:
+                      p.slug === "reelwish"
+                        ? `url(${getBentoImage(p.slug)}), url(${p.thumbnail}), url(/projects/reelwish/float-square.png)`
+                        : `url(${getBentoImage(p.slug)}), url(${p.thumbnail})`,
                     backgroundSize: "cover",
                     backgroundPosition: "center",
                   }}
@@ -468,7 +471,7 @@ export default function Home() {
                       <img
                         src={getBentoIconSrc(p.slug)}
                         alt=""
-                        className="size-[20px] md:size-[30px] rounded-[4px] object-cover shrink-0 ring-1 ring-black/5 mt-px"
+                        className="size-[24px] md:size-[32px] rounded-[4px] object-cover shrink-0 ring-1 ring-black/5 mt-px"
                         onError={(e) => {
                           const el = e.currentTarget
                           el.onerror = null
@@ -496,7 +499,7 @@ export default function Home() {
                 </>
               )
 
-              const commonClassName = "rounded-2xl relative cursor-pointer group bg-card flex flex-col p-2"
+              const commonClassName = "rounded-[11px] md:rounded-2xl relative cursor-pointer group bg-card flex flex-col p-2"
               const mobileLayoutBySlug: Record<string, { gridColumn: string; gridRow: string }> = {
                 bookee: { gridColumn: "span 1", gridRow: "span 1" },
                 petcard: { gridColumn: "span 1", gridRow: "span 3" },

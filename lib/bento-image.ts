@@ -7,6 +7,7 @@
  */
 export function getBentoImage(slug: string) {
   const base = `/projects/${slug}`
+  if (slug === "reelwish") return `${base}/bento.png`
   if (slug === "playdates") return `${base}/bento-wide.jpg`
   if (slug === "petcard") return `${base}/bento-tall.jpg`
   return `${base}/bento.jpg`
