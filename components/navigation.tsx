@@ -119,7 +119,10 @@ export default function Navigation() {
                   : "1px solid rgba(255,255,255,0)",
             boxShadow: useTransform(
               navShadow,
-              (v) => `0 10px 34px rgba(15, 23, 42, ${v}), inset 0 1px 0 rgba(255,255,255,${0.8 * v})`
+              (v) =>
+                isMobile
+                  ? `0 10px 34px rgba(15, 23, 42, ${v})`
+                  : `0 10px 34px rgba(15, 23, 42, ${v}), inset 0 1px 0 rgba(255,255,255,${0.8 * v})`
             ),
           }}
         >
@@ -136,7 +139,9 @@ export default function Navigation() {
             />
             <div
               className="absolute inset-0 rounded-[inherit]"
-              style={{ boxShadow: darkMode ? "none" : "inset 0 -1px 0 rgba(255,255,255,0.4)" }}
+              style={{
+                boxShadow: isMobile || darkMode ? "none" : "inset 0 -1px 0 rgba(255,255,255,0.4)",
+              }}
             />
           </div>
 
