@@ -25,33 +25,33 @@ function bentoIconSrc(slug: string) {
 function showcaseVideoSrc(slug: string, isMobile: boolean) {
   if (slug === "bookee") {
     return isMobile
-      ? "/projects/bookee/bookee-showcase-mobile.mp4?v=20260427-mobilefix2"
-      : "/projects/bookee/bookee-showcase.mp4?v=20260424-assetfix"
+      ? "/projects/bookee/bookee-showcase-mobile.mp4?v=20260427-lowres1"
+      : "/projects/bookee/bookee-showcase.mp4?v=20260427-lowres1"
   }
   if (slug === "playdates") {
     return isMobile
-      ? "/projects/playdates/playdates-showcase-mobile.mp4?v=20260427-mobilefix2"
-      : "/projects/playdates/playdates-showcase.mp4?v=20260424-assetfix"
+      ? "/projects/playdates/playdates-showcase-mobile.mp4?v=20260427-lowres1"
+      : "/projects/playdates/playdates-showcase.mp4?v=20260427-lowres1"
   }
   if (slug === "petcard") {
     return isMobile
-      ? "/projects/petcard/petcard-showcase-mobile.mp4?v=20260427-petcard-refresh1"
-      : "/projects/petcard/petcard-showcase.mp4?v=20260427-petcard-desktop-refresh1"
+      ? "/projects/petcard/petcard-showcase-mobile.mp4?v=20260427-lowres1"
+      : "/projects/petcard/petcard-showcase.mp4?v=20260427-lowres1"
   }
   if (slug === "notion-client-intake") {
     return isMobile
-      ? "/projects/notion-client-intake/notion-client-intake-showcase-mobile.mp4?v=20260427-mobilefix2"
-      : "/projects/notion-client-intake/notion-client-intake-showcase.mp4?v=20260424-assetfix"
+      ? "/projects/notion-client-intake/notion-client-intake-showcase-mobile.mp4?v=20260427-lowres1"
+      : "/projects/notion-client-intake/notion-client-intake-showcase.mp4?v=20260427-lowres1"
   }
   if (slug === "reelwish") {
     return isMobile
-      ? "/projects/reelwish/showcase-mobile.mp4?v=20260427-reelwish-refresh2"
-      : "/projects/reelwish/showcase.mp4?v=20260424-assetfix"
+      ? "/projects/reelwish/showcase-mobile.mp4?v=20260427-lowres1"
+      : "/projects/reelwish/showcase.mp4?v=20260427-lowres1"
   }
   if (slug === "mina") {
     return isMobile
-      ? "/projects/mina/mina-showcase-mobile.mp4?v=20260427-mobilefix2"
-      : "/projects/mina/mina-showcase.mp4?v=20260424-assetfix"
+      ? "/projects/mina/mina-showcase-mobile.mp4?v=20260427-lowres1"
+      : "/projects/mina/mina-showcase.mp4?v=20260427-lowres1"
   }
   return null
 }
