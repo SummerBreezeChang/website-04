@@ -13,6 +13,7 @@ const caseStudySlugs = ["playdates", "notion-client-intake", "petcard", "reelwis
 export default function Navigation() {
   const pathname = usePathname()
   const [mobileOpen, setMobileOpen] = useState(false)
+  const [isMobile, setIsMobile] = useState(false)
   const [scrolled, setScrolled]     = useState(false)
   const [caseOpen, setCaseOpen] = useState(false)
   const [darkMode, setDarkMode] = useState(false)
@@ -51,6 +52,13 @@ export default function Navigation() {
   useEffect(() => {
     const isDark = document.documentElement.classList.contains("dark")
     setDarkMode(isDark)
+  }, [])
+
+  useEffect(() => {
+    const updateMobile = () => setIsMobile(window.innerWidth < 768)
+    updateMobile()
+    window.addEventListener("resize", updateMobile)
+    return () => window.removeEventListener("resize", updateMobile)
   }, [])
 
   useEffect(() => {
@@ -102,7 +110,13 @@ export default function Navigation() {
               (v) => `rgba(255, 255, 255, ${v * 0.82})`
             ),
             backdropFilter:  scrolled ? "blur(24px) saturate(180%)" : "none",
-            border:          darkMode ? "1px solid rgba(255,255,255,0)" : scrolled ? "1px solid rgba(255,255,255,0.72)" : "1px solid rgba(255,255,255,0)",
+            border:          isMobile
+              ? "1px solid rgba(255,255,255,0)"
+              : darkMode
+                ? "1px solid rgba(255,255,255,0)"
+                : scrolled
+                  ? "1px solid rgba(255,255,255,0.72)"
+                  : "1px solid rgba(255,255,255,0)",
             boxShadow: useTransform(
               navShadow,
               (v) => `0 10px 34px rgba(15, 23, 42, ${v}), inset 0 1px 0 rgba(255,255,255,${0.8 * v})`
@@ -235,12 +249,20 @@ export default function Navigation() {
           </Link>
 
           {/* Mobile center brand */}
-          <Link
-            href="/"
-            className="md:hidden justify-self-center text-[32px] font-semibold tracking-tight leading-none"
-            style={{ color: darkMode ? (scrolled ? "#111827" : "rgba(255,255,255,0.92)") : "#111827" }}
-          >
-            summerchang.co
+          <Link href="/" className="md:hidden justify-self-center">
+            <img
+              src="https://images.squarespace-cdn.com/content/v1/654ed48ab10a1e0878b75a4f/92df0c43-0692-4655-a873-47801bbd2e5d/logo2.png?format=1500w"
+              alt="Summer Chang"
+              className="h-5 w-auto"
+              style={{
+                filter: darkMode
+                  ? scrolled
+                    ? "none"
+                    : "brightness(0) invert(1)"
+                  : "brightness(0) saturate(100%)",
+                opacity: 0.95,
+              }}
+            />
           </Link>
 
           {/* Mobile — hamburger */}

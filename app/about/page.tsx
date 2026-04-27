@@ -414,8 +414,8 @@ export default function AboutPage() {
 
           {/* Animated headline */}
           <h1 className="text-3xl md:text-5xl font-bold leading-tight mb-10 font-mono tracking-tight">
-            I&apos;m Summer,{" "}
-            <span className="text-primary inline-block">
+            <span className="block">I&apos;m Summer,</span>
+            <span className="block text-primary">
               {typedText}
               <span className="inline-block ml-0.5 animate-pulse">|</span>
             </span>
