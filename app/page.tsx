@@ -98,12 +98,12 @@ export default function Home() {
     { gi: 4, ix: 86, iy: 86, dy: -48, r:   3, w: 216, h: 136 },
   ]
   const floatingCardsMobile = [
-    { slug: "bookee", gi: featuredIndexBySlug.bookee ?? 0, ix: 14, iy: 15, dx: -2, dy: 0, r: -7, w: 110, h: 148 },
-    { slug: "petcard", gi: featuredIndexBySlug.petcard ?? 2, ix: 84, iy: 15, dx: 0, dy: 0, r: 6, w: 100, h: 158 },
-    { slug: "notion-client-intake", gi: featuredIndexBySlug["notion-client-intake"] ?? 3, ix: 82, iy: 55, dx: 0, dy: 0, r: 3, w: 112, h: 112 },
-    { slug: "reelwish", gi: featuredIndexBySlug.reelwish ?? 5, ix: 16, iy: 62, dx: 0, dy: 0, r: -3, w: 126, h: 94 },
-    { slug: "playdates", gi: featuredIndexBySlug.playdates ?? 1, ix: 20, iy: 80, dx: 0, dy: 0, r: -2, w: 130, h: 92 },
-    { slug: "mina", gi: featuredIndexBySlug.mina ?? 4, ix: 82, iy: 79, dx: 0, dy: 0, r: 3, w: 124, h: 90 },
+    { slug: "bookee", gi: featuredIndexBySlug.bookee ?? 0, ix: 14, iy: 20, dx: -2, dy: 0, r: -7, w: 110, h: 148 },
+    { slug: "petcard", gi: featuredIndexBySlug.petcard ?? 2, ix: 84, iy: 8, dx: 0, dy: 0, r: 6, w: 100, h: 158 },
+    { slug: "notion-client-intake", gi: featuredIndexBySlug["notion-client-intake"] ?? 3, ix: 90, iy: 62, dx: 0, dy: 0, r: 3, w: 112, h: 112 },
+    { slug: "reelwish", gi: featuredIndexBySlug.reelwish ?? 5, ix: 10, iy: 82, dx: 0, dy: 0, r: -3, w: 126, h: 94 },
+    { slug: "playdates", gi: featuredIndexBySlug.playdates ?? 1, ix: 24, iy: 94, dx: 0, dy: 0, r: -2, w: 130, h: 92 },
+    { slug: "mina", gi: featuredIndexBySlug.mina ?? 4, ix: 86, iy: 94, dx: 0, dy: 0, r: 3, w: 124, h: 90 },
   ]
   const isMobile = vw < 768
   const activeFloatingCards = isMobile ? floatingCardsMobile : floatingCards
@@ -338,6 +338,7 @@ export default function Home() {
             key={i}
             className="fixed rounded-2xl flex items-center justify-center pointer-events-none z-50 overflow-hidden"
             style={{
+              zIndex: isMobile ? 8 : 50,
               left:   sx + (g.x - sx) * ep,
               top:    sy + (g.y - scrollY - sy) * ep,  // g.y is document-space; adjust for scroll
               width:  c.w + (g.width  - c.w) * ep,
@@ -370,6 +371,7 @@ export default function Home() {
         <div
           className="text-center max-w-2xl mx-auto relative z-10"
           style={{
+            zIndex: isMobile ? 20 : 10,
             opacity:   Math.max(0, 1 - fp * 1.5),
             transform: `translateY(${fp * 40}px)`,
           }}
@@ -380,9 +382,9 @@ export default function Home() {
               Available for work
             </span>
           </div>
-          <h1 className="text-[38px] md:text-5xl font-bold leading-tight mb-3 md:mb-5 font-mono tracking-tight">
-            <span className="block -translate-y-[8px]">I design products</span>
-            <span className="block text-primary mb-[20px] md:mb-[44px]">
+          <h1 className="text-[26px] md:text-5xl font-bold leading-tight mb-3 md:mb-5 font-mono tracking-tight">
+            <span className="block -translate-y-[8px] whitespace-nowrap">I design products</span>
+            <span className="block text-primary mb-[20px] md:mb-[44px] whitespace-nowrap">
               that are {heroTypedText}
               <span className="inline-block ml-0.5 animate-pulse">|</span>
             </span>
