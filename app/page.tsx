@@ -99,8 +99,8 @@ export default function Home() {
   ]
   const floatingCardsMobile = [
     { slug: "bookee", gi: featuredIndexBySlug.bookee ?? 0, ix: 14, iy: 20, dx: -2, dy: 0, r: -7, w: 110, h: 148 },
-    { slug: "petcard", gi: featuredIndexBySlug.petcard ?? 2, ix: 84, iy: 8, dx: 0, dy: 0, r: 6, w: 100, h: 158 },
-    { slug: "notion-client-intake", gi: featuredIndexBySlug["notion-client-intake"] ?? 3, ix: 90, iy: 62, dx: 0, dy: 24, r: 3, w: 112, h: 112 },
+    { slug: "petcard", gi: featuredIndexBySlug.petcard ?? 2, ix: 84, iy: 8, dx: 0, dy: 32, r: 6, w: 100, h: 158 },
+    { slug: "notion-client-intake", gi: featuredIndexBySlug["notion-client-intake"] ?? 3, ix: 90, iy: 62, dx: 0, dy: 48, r: 3, w: 112, h: 112 },
     { slug: "reelwish", gi: featuredIndexBySlug.reelwish ?? 5, ix: 10, iy: 82, dx: 0, dy: -32, r: -3, w: 126, h: 94 },
     { slug: "playdates", gi: featuredIndexBySlug.playdates ?? 1, ix: 24, iy: 94, dx: 0, dy: -16, r: -2, w: 130, h: 92 },
     { slug: "mina", gi: featuredIndexBySlug.mina ?? 4, ix: 86, iy: 94, dx: 0, dy: -16, r: 3, w: 124, h: 90 },

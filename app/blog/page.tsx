@@ -1,4 +1,3 @@
-import Link from "next/link"
 import Navigation from "@/components/navigation"
 
 export default function BlogPage() {
@@ -13,7 +12,12 @@ export default function BlogPage() {
               src="https://postfit.beehiiv.com/"
               title="Postfit archive"
               className="w-full"
-              style={{ minHeight: "2600px", border: 0 }}
+              loading="lazy"
+              style={{
+                height: "calc(100dvh - 180px)",
+                minHeight: "680px",
+                border: 0,
+              }}
             />
           </div>
         </div>

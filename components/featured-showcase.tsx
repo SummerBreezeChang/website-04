@@ -36,7 +36,7 @@ function showcaseVideoSrc(slug: string, isMobile: boolean) {
   if (slug === "petcard") {
     return isMobile
       ? "/projects/petcard/petcard-showcase-mobile.mp4?v=20260427-petcard-refresh1"
-      : "/projects/petcard/petcard-showcase.mp4?v=20260424-assetfix"
+      : "/projects/petcard/petcard-showcase.mp4?v=20260427-petcard-desktop-refresh1"
   }
   if (slug === "notion-client-intake") {
     return isMobile
@@ -45,7 +45,7 @@ function showcaseVideoSrc(slug: string, isMobile: boolean) {
   }
   if (slug === "reelwish") {
     return isMobile
-      ? "/projects/reelwish/showcase-mobile.mp4?v=20260427-mobilefix2"
+      ? "/projects/reelwish/showcase-mobile.mp4?v=20260427-reelwish-refresh2"
       : "/projects/reelwish/showcase.mp4?v=20260424-assetfix"
   }
   if (slug === "mina") {
@@ -131,7 +131,8 @@ export default function FeaturedShowcase({ projects }: Props) {
       const firstCard = track.firstElementChild as HTMLElement | null
       const trackStyles = window.getComputedStyle(track)
       const trackGap = Number.parseFloat(trackStyles.columnGap || trackStyles.gap || "0") || 0
-      const stepW = (firstCard?.offsetWidth ?? viewportW) + trackGap
+      // Mobile must snap at exact viewport-width increments to avoid mixed-card frames.
+      const stepW = isMobile ? viewportW : (firstCard?.offsetWidth ?? viewportW) + trackGap
       const rawTx = active * stepW
       const maxTx = Math.max(0, track.scrollWidth - viewportW)
       const tx = Math.min(rawTx, maxTx)
@@ -199,9 +200,13 @@ export default function FeaturedShowcase({ projects }: Props) {
               const cardBody = (
                 <>
                 {/* Image-first: no text overlay — matches Section 2 bento readability */}
-                <div className="relative flex-1 min-h-[56vh] md:min-h-[64vh] rounded-md overflow-hidden">
+                <div
+                  className="relative flex-1 min-h-[56vh] rounded-md overflow-hidden md:min-h-0"
+                  style={isMobile ? undefined : { aspectRatio: "1622 / 708" }}
+                >
                   {showcaseVideoSrc(p.slug, isMobile) ? (
                     <video
+                      key={`${p.slug}-${isMobile ? "mobile" : "desktop"}-${showcaseVideoSrc(p.slug, isMobile)}`}
                       ref={(el) => {
                         videoRefs.current[i] = el
                       }}
@@ -257,7 +262,7 @@ export default function FeaturedShowcase({ projects }: Props) {
                 </>
               )
 
-              const commonClassName = "h-full shrink-0 basis-full relative flex flex-col text-left group"
+              const commonClassName = "h-full w-full min-w-full shrink-0 relative flex flex-col text-left group"
               if (!PROJECT_DETAILS_ENABLED) {
                 return (
                   <div key={p.slug} className={commonClassName}>
