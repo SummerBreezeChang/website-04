@@ -25,14 +25,34 @@ function bentoIconSrc(slug: string) {
 function showcaseVideoSrc(slug: string, isMobile: boolean) {
   if (slug === "bookee") {
     return isMobile
-      ? "/projects/bookee/bookee-showcase-mobile.mp4?v=20260424-mobilefix"
+      ? "/projects/bookee/bookee-showcase-mobile.mp4?v=20260427-mobileall"
       : "/projects/bookee/bookee-showcase.mp4?v=20260424-assetfix"
   }
-  if (slug === "playdates") return "/projects/playdates/playdates-showcase.mp4?v=20260424-assetfix"
-  if (slug === "petcard") return "/projects/petcard/petcard-showcase.mp4?v=20260424-assetfix"
-  if (slug === "notion-client-intake") return "/projects/notion-client-intake/notion-client-intake-showcase.mp4?v=20260424-assetfix"
-  if (slug === "reelwish") return "/projects/reelwish/showcase.mp4?v=20260424-assetfix"
-  if (slug === "mina") return "/projects/mina/mina-showcase.mp4?v=20260424-assetfix"
+  if (slug === "playdates") {
+    return isMobile
+      ? "/projects/playdates/playdates-showcase-mobile.mp4?v=20260427-mobileall"
+      : "/projects/playdates/playdates-showcase.mp4?v=20260424-assetfix"
+  }
+  if (slug === "petcard") {
+    return isMobile
+      ? "/projects/petcard/petcard-showcase-mobile.mp4?v=20260427-mobileall"
+      : "/projects/petcard/petcard-showcase.mp4?v=20260424-assetfix"
+  }
+  if (slug === "notion-client-intake") {
+    return isMobile
+      ? "/projects/notion-client-intake/notion-client-intake-showcase-mobile.mp4?v=20260427-mobileall"
+      : "/projects/notion-client-intake/notion-client-intake-showcase.mp4?v=20260424-assetfix"
+  }
+  if (slug === "reelwish") {
+    return isMobile
+      ? "/projects/reelwish/showcase-mobile.mp4?v=20260427-mobileall"
+      : "/projects/reelwish/showcase.mp4?v=20260424-assetfix"
+  }
+  if (slug === "mina") {
+    return isMobile
+      ? "/projects/mina/mina-showcase-mobile.mp4?v=20260427-mobileall"
+      : "/projects/mina/mina-showcase.mp4?v=20260424-assetfix"
+  }
   return null
 }
 
@@ -45,7 +65,7 @@ export default function FeaturedShowcase({ projects }: Props) {
   const N = projects.length
   // Vertical scroll needed to advance one project card (as a fraction of viewport height).
   // Lower = faster horizontal advance.
-  const STEP_VH = 0.34
+  const STEP_VH_DESKTOP = 0.34
   const CARD_GAP_PX = 48
 
   const sectionRef = useRef<HTMLElement>(null)
@@ -103,9 +123,9 @@ export default function FeaturedShowcase({ projects }: Props) {
         hasEnteredRef.current = true
         stickyPanel.style.transform = "translateY(0px)"
       }
-      const rawIndex = progress * (N - 1)
-      // Snap to project index so each scroll step advances one grouped card state.
-      const active = Math.min(N - 1, Math.max(0, Math.round(rawIndex)))
+      const rawIndex = progress * N
+      // Mobile favors one-by-one progression; floor avoids jumping at half thresholds.
+      const active = Math.min(N - 1, Math.max(0, Math.floor(rawIndex)))
 
       // Pixel-based translateX — clamp to actual max to avoid blank tail on last card.
       const stepW = viewportW + CARD_GAP_PX
@@ -134,14 +154,16 @@ export default function FeaturedShowcase({ projects }: Props) {
       window.removeEventListener("scroll", update)
       window.removeEventListener("resize", update)
     }
-  }, [N])
+  }, [N, isMobile])
+
+  const stepVh = isMobile ? STEP_VH_DESKTOP * 3 : STEP_VH_DESKTOP
 
   return (
     <section
       ref={sectionRef}
       className="relative"
       // Total height = sticky viewport (100vh) + per-step scroll distance for remaining cards.
-      style={{ height: `calc(${100 + (N - 1) * STEP_VH * 100}vh - 60px)` }}
+      style={{ height: `calc(${100 + (N - 1) * stepVh * 100}vh - 60px)` }}
     >
       {/* Sticky viewport panel with padding — creates inset effect */}
       <div
@@ -200,26 +222,26 @@ export default function FeaturedShowcase({ projects }: Props) {
                 </div>
 
                 <div className="relative z-10 shrink-0 px-4 py-4 md:px-8 md:py-5 bg-transparent">
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="flex items-start gap-2.5 min-w-0">
+                  <div className="flex items-start md:justify-between gap-3">
+                    <div className="flex items-start gap-2.5 min-w-0 w-full md:w-auto">
                       <img
                         src={bentoIconSrc(p.slug)}
                         alt=""
-                        className="size-[20px] md:size-[30px] rounded-[4px] object-cover shrink-0 ring-1 ring-black/5 mt-px"
+                        className="size-[40px] md:size-[30px] rounded-[4px] object-cover shrink-0 ring-1 ring-black/5 mt-px"
                         onError={(e) => {
                           const el = e.currentTarget
                           el.onerror = null
                           el.src = "/favicon-s.png"
                         }}
                       />
-                      <div className="min-w-0 ml-[14px]">
+                      <div className="min-w-0 ml-[14px] flex-1">
                         <h2 className="text-[18px] md:text-[24px] font-semibold leading-tight text-foreground truncate">
                           {p.title}
                         </h2>
-                        <p className="hidden md:block text-[12px] md:text-[14px] text-muted-foreground leading-snug line-clamp-2 mt-0.5">
+                        <p className="text-[12px] md:text-[14px] text-muted-foreground leading-snug line-clamp-1 mt-0.5">
                           {p.subtitle}
                         </p>
-                        <span className="mt-6 inline-flex w-fit items-center gap-1.5 whitespace-nowrap text-xs md:text-sm font-semibold text-foreground bg-white px-4 py-2 rounded-full shadow-[0_10px_24px_-16px_rgba(0,0,0,0.35)] group-hover:bg-white/90 transition-colors">
+                        <span className="mt-3 inline-flex w-fit items-center gap-1.5 whitespace-nowrap text-xs md:text-sm font-semibold text-foreground bg-white px-4 py-2 rounded-full shadow-[0_10px_24px_-16px_rgba(0,0,0,0.35)] group-hover:bg-white/90 transition-colors">
                           View case study
                         </span>
                       </div>

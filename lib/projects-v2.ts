@@ -195,7 +195,7 @@ export const projects: ProjectMeta[] = [
   {
     slug:"reelwish",title:"Reelwish: What if a gesture said more than a word?",subtitle:"Figma Make Hackathon concept — hand movements trigger real-time emotional reactions so digital connection feels present, not archived.",
     category:"digital-product",categoryLabel:"Interaction Design",color:"#C026D3",year:"2026",role:"Interaction Designer",client:"Figma Make-a-thon (powered by Contra)",timeline:"Feb — Mar 2026",tools:"Figma, Figma Make",
-    tags:["Gesture UX","Hackathon","Emotional Design","Prototype","Speculative"],featured:false,badges:["Concept"],
+    tags:["Gesture UX","Hackathon","Emotional Design","Prototype","Speculative"],featured:true,badges:["Concept"],
     thumbnail:"/projects/reelwish/thumb.jpg",heroImage:"Front-camera gesture capture — joy / surprise / support / connection reactions animating in real time for viewer and creator",
     tldr:"Designed Reelwish for the Figma Make Hackathon: a gesture-driven layer on top of digital communication where movements (raised hands, hands-to-face, open palm, wave) trigger joy, surprise, support, and connection — built as a working interactive prototype in Figma Make, not static mocks. Focused on immediacy (<0.5s), no extra hardware, and reactions visible to both sides of the screen.",
     tldrStats:[{value:"4",label:"Core emotions + gesture mappings"},{value:"<0.5s",label:"Target recognition / response window"},{value:"Live",label:"Concept prototype on Figma Site"}],
@@ -381,7 +381,7 @@ export const projects: ProjectMeta[] = [
   {
     slug:"tca",title:"TCA Alliance",subtitle:"Brand and web for a 17-member biopharmaceutical alliance.",
     category:"digital-product",categoryLabel:"Brand & Web",color:"#0D9488",year:"2024",role:"Brand & Web Designer",client:"Taiwan CDMO Alliance",timeline:"2024",tools:"Figma, Web design, Brand identity",
-    tags:["Brand","Website","Biopharmaceutical","Information Architecture","Identity"],featured:true,badges:[],
+    tags:["Brand","Website","Biopharmaceutical","Information Architecture","Identity"],featured:false,badges:[],
     thumbnail:"/projects/tca/thumb.jpg",heroImage:"TCA Alliance website — homepage with member directory and capability navigation",
     tldr:"Designed the brand website and full visual identity for Taiwan CDMO Alliance — a biopharmaceutical network of 17 contract development and manufacturing organizations. The core challenge was information architecture: making 17 distinct companies and their overlapping capabilities navigable for potential pharma partners.",
     tldrStats:[{value:"17",label:"CDMO members organized"},{value:"Full",label:"Brand identity delivered"},{value:"Live",label:"Website launched"}],
