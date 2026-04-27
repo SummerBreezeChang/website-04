@@ -91,59 +91,80 @@ export default function Navigation() {
 
   return (
     <>
-      {/* ── Main nav ── */}
+      {/* ── Main nav ──
+          Mobile: at top = full width, logo left + menu right, no glass.
+          After scroll = centered oval bar with frosted glass (like desktop). */}
       <motion.div
-        className="fixed top-0 left-0 right-0 z-[200] flex justify-center"
-        style={{ paddingTop: scrolled ? 12 : 20 }}
+        className="fixed top-0 left-0 right-0 z-[200] flex w-full justify-center"
+        style={{ paddingTop: isMobile ? (scrolled ? 10 : 18) : scrolled ? 12 : 20 }}
       >
         <motion.nav
-          className="relative grid grid-cols-[auto_1fr_auto] md:grid-cols-[1fr_auto_1fr] items-center px-5 md:px-8 overflow-visible"
-          style={{
-            width:           scrolled ? "68%" : "100%",
-            borderRadius:    scrolled ? 38 : 28,
-            paddingTop:      14,
-            paddingBottom:   14,
-            marginTop:       16,
-            marginBottom:    16,
-            backgroundColor: useTransform(
-              navBgOpacity,
-              (v) => `rgba(255, 255, 255, ${v * 0.82})`
-            ),
-            backdropFilter:  scrolled ? "blur(24px) saturate(180%)" : "none",
-            border:          isMobile
-              ? "1px solid rgba(255,255,255,0)"
-              : darkMode
-                ? "1px solid rgba(255,255,255,0)"
-                : scrolled
-                  ? "1px solid rgba(255,255,255,0.72)"
-                  : "1px solid rgba(255,255,255,0)",
-            boxShadow: useTransform(
-              navShadow,
-              (v) =>
-                isMobile
-                  ? `0 10px 34px rgba(15, 23, 42, ${v})`
-                  : `0 10px 34px rgba(15, 23, 42, ${v}), inset 0 1px 0 rgba(255,255,255,${0.8 * v})`
-            ),
-          }}
+          className={
+            isMobile
+              ? "relative flex w-full min-w-0 max-w-none items-center justify-between self-stretch overflow-visible px-4 transition-[width,background-color,box-shadow,border-radius,backdrop-filter] duration-300 ease-out"
+              : "relative grid grid-cols-[1fr_auto_1fr] items-center px-5 md:px-8 overflow-visible"
+          }
+          style={
+            isMobile
+              ? {
+                  width: scrolled ? "min(100%, 92%)" : "100%",
+                  maxWidth: scrolled ? 420 : "100%",
+                  minHeight: 52,
+                  borderRadius: scrolled ? 9999 : 0,
+                  paddingTop: 10,
+                  paddingBottom: 10,
+                  marginTop: scrolled ? 10 : 4,
+                  marginBottom: 8,
+                  backgroundColor: scrolled ? "rgba(255, 255, 255, 0.86)" : "rgba(0,0,0,0)",
+                  backdropFilter: scrolled ? "blur(20px) saturate(180%)" : "none",
+                  WebkitBackdropFilter: scrolled ? "blur(20px) saturate(180%)" : "none",
+                  border: scrolled ? "1px solid rgba(255,255,255,0.55)" : "1px solid rgba(0,0,0,0)",
+                  boxShadow: scrolled ? "0 8px 32px rgba(15, 23, 42, 0.1)" : "none",
+                }
+              : {
+                  width:           scrolled ? "68%" : "100%",
+                  borderRadius:    scrolled ? 38 : 28,
+                  paddingTop:      14,
+                  paddingBottom:   14,
+                  marginTop:       16,
+                  marginBottom:    16,
+                  backgroundColor: useTransform(
+                    navBgOpacity,
+                    (v) => `rgba(255, 255, 255, ${v * 0.82})`
+                  ),
+                  backdropFilter:  scrolled ? "blur(24px) saturate(180%)" : "none",
+                  border:          darkMode
+                    ? "1px solid rgba(255,255,255,0)"
+                    : scrolled
+                      ? "1px solid rgba(255,255,255,0.72)"
+                      : "1px solid rgba(255,255,255,0)",
+                  boxShadow: useTransform(
+                    navShadow,
+                    (v) => `0 10px 34px rgba(15, 23, 42, ${v}), inset 0 1px 0 rgba(255,255,255,${0.8 * v})`
+                  ),
+                }
+          }
         >
           {/* Clip visual layers to rounded nav shape */}
-          <div className="pointer-events-none absolute inset-0 rounded-[inherit] overflow-hidden">
-            <div
-              className="absolute inset-x-0 top-0 h-1/2"
-              style={{
-                background:
-                  scrolled
-                    ? "linear-gradient(180deg, rgba(255,255,255,0.62) 0%, rgba(255,255,255,0.16) 60%, rgba(255,255,255,0) 100%)"
-                    : "linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0) 100%)",
-              }}
-            />
-            <div
-              className="absolute inset-0 rounded-[inherit]"
-              style={{
-                boxShadow: isMobile || darkMode ? "none" : "inset 0 -1px 0 rgba(255,255,255,0.4)",
-              }}
-            />
-          </div>
+          {(!isMobile || scrolled) && (
+            <div className="pointer-events-none absolute inset-0 rounded-[inherit] overflow-hidden">
+              <div
+                className="absolute inset-x-0 top-0 h-1/2"
+                style={{
+                  background:
+                    scrolled
+                      ? "linear-gradient(180deg, rgba(255,255,255,0.62) 0%, rgba(255,255,255,0.16) 60%, rgba(255,255,255,0) 100%)"
+                      : "linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0) 100%)",
+                }}
+              />
+              <div
+                className="absolute inset-0 rounded-[inherit]"
+                style={{
+                  boxShadow: isMobile || darkMode ? "none" : "inset 0 -1px 0 rgba(255,255,255,0.4)",
+                }}
+              />
+            </div>
+          )}
 
           {/* Left cluster — links */}
           <div className="hidden md:flex items-center gap-8 justify-self-start">
@@ -254,7 +275,7 @@ export default function Navigation() {
           </Link>
 
           {/* Mobile center brand */}
-          <Link href="/" className="md:hidden justify-self-center">
+          <Link href="/" className="relative z-10 shrink-0 md:hidden">
             <img
               src="https://images.squarespace-cdn.com/content/v1/654ed48ab10a1e0878b75a4f/92df0c43-0692-4655-a873-47801bbd2e5d/logo2.png?format=1500w"
               alt="Summer Chang"
@@ -273,7 +294,7 @@ export default function Navigation() {
           {/* Mobile — hamburger */}
           <button
             onClick={() => setMobileOpen((v) => !v)}
-            className="md:hidden p-1 justify-self-end"
+            className="relative z-10 md:hidden p-1 shrink-0"
             aria-label={mobileOpen ? "Close menu" : "Open menu"}
           >
             <svg
