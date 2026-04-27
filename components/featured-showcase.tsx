@@ -200,10 +200,7 @@ export default function FeaturedShowcase({ projects }: Props) {
               const cardBody = (
                 <>
                 {/* Image-first: no text overlay — matches Section 2 bento readability */}
-                <div
-                  className="relative flex-1 min-h-[56vh] rounded-md overflow-hidden md:min-h-0"
-                  style={isMobile ? undefined : { aspectRatio: "1622 / 708" }}
-                >
+                <div className="relative flex-1 min-h-[56vh] md:min-h-[64vh] rounded-md overflow-hidden">
                   {showcaseVideoSrc(p.slug, isMobile) ? (
                     <video
                       key={`${p.slug}-${isMobile ? "mobile" : "desktop"}-${showcaseVideoSrc(p.slug, isMobile)}`}
