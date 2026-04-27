@@ -46,7 +46,7 @@ export default function Home() {
   const projectsRef         = useRef<HTMLElement>(null)
   const projectsCardRef     = useRef<HTMLDivElement>(null)
 
-  const featured = getFeaturedProjects()
+  const featured = getFeaturedProjects().filter((p) => p.slug !== "tca")
   const N = featured.length // should be 6
   const featuredIndexBySlug = featured.reduce<Record<string, number>>((acc, project, index) => {
     acc[project.slug] = index
@@ -107,6 +107,12 @@ export default function Home() {
   ]
   const isMobile = vw < 768
   const activeFloatingCards = isMobile ? floatingCardsMobile : floatingCards
+  const mobileBentoOrder = ["bookee", "petcard", "notion-client-intake", "reelwish", "playdates"]
+  const featuredForBento = isMobile
+    ? mobileBentoOrder
+        .map((slug) => featured.find((p) => p.slug === slug))
+        .filter((p): p is NonNullable<typeof p> => Boolean(p))
+    : featured
 
   // Section 1 floating cards image naming:
   // - /projects/<slug>/float-portrait.jpg
@@ -292,7 +298,7 @@ export default function Home() {
   // Drive headline size directly with contact expansion so it reaches
   // a bold, Featured-Work-like presence at the final stage.
   const contactHeadlineMax = isMobile
-    ? Math.max(72, Math.min(92, cW * 0.18, cH * 0.2))
+    ? Math.max(72, Math.min(88, cW * 0.18, cH * 0.2))
     : Math.max(112, Math.min(180, cW * 0.22, cH * 0.42))
   const contactHeadlineSize = lerp(isMobile ? 34 : 46, contactHeadlineMax, textRise)
 
@@ -436,12 +442,13 @@ export default function Home() {
               gridAutoRows: isMobile ? 126 : 120,
             }}
           >
-            {featured.map((p, i) => {
+            {featuredForBento.map((p, i) => {
+              const originalIndex = featured.findIndex((x) => x.slug === p.slug)
               const cardBody = (
                 <>
                 {/* Invisible ref div so we can measure card center for flying animation */}
                 <div
-                  ref={(el) => { cardRefs.current[i] = el as HTMLDivElement }}
+                  ref={(el) => { cardRefs.current[originalIndex] = el as HTMLDivElement }}
                   className="absolute inset-0"
                 />
 
@@ -461,7 +468,7 @@ export default function Home() {
                       <img
                         src={getBentoIconSrc(p.slug)}
                         alt=""
-                        className="size-[30px] rounded-[4px] object-cover shrink-0 ring-1 ring-black/5 mt-px"
+                        className="size-[20px] md:size-[30px] rounded-[4px] object-cover shrink-0 ring-1 ring-black/5 mt-px"
                         onError={(e) => {
                           const el = e.currentTarget
                           el.onerror = null
@@ -477,7 +484,7 @@ export default function Home() {
                         </p>
                       </div>
                     </div>
-                    <span className="shrink-0 inline-block text-[9px] font-semibold bg-muted text-foreground px-2 py-0.5 rounded-full">
+                    <span className="hidden md:inline-block shrink-0 text-[9px] font-semibold bg-muted text-foreground px-2 py-0.5 rounded-full">
                       {p.categoryLabel}
                     </span>
                   </div>
@@ -490,10 +497,19 @@ export default function Home() {
               )
 
               const commonClassName = "rounded-2xl relative cursor-pointer group bg-card flex flex-col p-2"
+              const mobileLayoutBySlug: Record<string, { gridColumn: string; gridRow: string }> = {
+                bookee: { gridColumn: "span 1", gridRow: "span 1" },
+                petcard: { gridColumn: "span 1", gridRow: "span 3" },
+                "notion-client-intake": { gridColumn: "span 1", gridRow: "span 1" },
+                reelwish: { gridColumn: "span 1", gridRow: "span 1" },
+                playdates: { gridColumn: "1 / -1", gridRow: "span 1" },
+              }
               const commonStyle = {
-                gridColumn: isMobile ? undefined : bento[bentoSlotBySlug[p.slug] ?? i]?.col,
+                gridColumn: isMobile
+                  ? (mobileLayoutBySlug[p.slug]?.gridColumn ?? "span 1")
+                  : bento[bentoSlotBySlug[p.slug] ?? i]?.col,
                 gridRow: isMobile
-                  ? (i % 3 === 1 ? "span 2" : undefined)
+                  ? (mobileLayoutBySlug[p.slug]?.gridRow ?? "span 1")
                   : bento[bentoSlotBySlug[p.slug] ?? i]?.row,
                 opacity: sp > (isMobile ? 0.72 : 0.85) ? 1 : 0,
                 transition: `opacity .4s ease ${i * 0.05}s`,
@@ -528,7 +544,11 @@ export default function Home() {
       </div>
 
       {/* ═══ SEE MORE ═══ */}
-      <section ref={seeMoreRef} className="-mt-[60px] py-12 text-center px-4" style={sectionRevealStyle(revealVisible.seeMore, 24)}>
+      <section
+        ref={seeMoreRef}
+        className={`${isMobile ? "mt-[24px]" : "-mt-[60px]"} py-12 text-center px-4`}
+        style={sectionRevealStyle(revealVisible.seeMore, 24)}
+      >
         {PROJECT_DETAILS_ENABLED ? (
           <Link
             href="/more"
@@ -541,8 +561,8 @@ export default function Home() {
             Case studies coming soon
           </span>
         )}
-        <p className="text-xs text-muted-foreground mt-3">
-          TCA Alliance · ReKeepIt · Client Ops Kit
+        <p className="text-xs text-muted-foreground mt-1.5">
+          Reelwish · ReKeepIt · Client Ops Kit
           <br className="md:hidden" />
           <span className="hidden md:inline"> · </span>
           Alacrity · Café Noir · more
@@ -700,8 +720,8 @@ export default function Home() {
             }}
           >
             <h2
-              className={`${isMobile ? "pl-6" : "pl-[72px] md:pl-[80px]"} text-[#0f172a] font-medium leading-[0.92] tracking-tight`}
-              style={{ fontSize: contactHeadlineSize, textShadow: "4px 4px 0 #ffffff" }}
+              className={`${isMobile ? "pl-4" : "pl-[72px] md:pl-[80px]"} text-[#0f172a] font-medium leading-[0.92] tracking-tight`}
+              style={{ fontSize: contactHeadlineSize, textShadow: "2px 2px 0 #ffffff" }}
             >
               Let&apos;s build<br />together
             </h2>
