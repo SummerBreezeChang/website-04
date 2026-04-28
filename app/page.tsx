@@ -192,18 +192,17 @@ export default function Home() {
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
+          if (!entry.isIntersecting) return
           if (entry.target === showcaseRef.current) {
-            if (entry.isIntersecting) {
-              setRevealVisible((prev) => (prev.showcase ? prev : { ...prev, showcase: true }))
-            }
-            return
+            setRevealVisible((prev) => ({ ...prev, showcase: true }))
           }
-          if (entry.target === seeMoreRef.current && entry.isIntersecting) {
+          if (entry.target === seeMoreRef.current) {
             setRevealVisible((prev) => ({ ...prev, seeMore: true }))
           }
+          observer.unobserve(entry.target)
         })
       },
-      { threshold: 0.1, rootMargin: "0px 0px -5% 0px" }
+      { threshold: 0.12, rootMargin: "0px 0px -8% 0px" }
     )
 
     if (showcaseRef.current) observer.observe(showcaseRef.current)
@@ -543,11 +542,7 @@ export default function Home() {
       </section>
 
       {/* ═══ SECTION 3: HORIZONTAL SCROLL SHOWCASE ═══ */}
-      <div
-        ref={showcaseRef}
-        className={isMobile ? "will-change-transform" : undefined}
-        style={isMobile ? sectionRevealStyle(revealVisible.showcase, 36) : undefined}
-      >
+      <div ref={showcaseRef}>
         <FeaturedShowcase projects={featured} />
       </div>
 
